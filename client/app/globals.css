@@ -1,0 +1,129 @@
+@import "tailwindcss";
+
+/* Tokens: see /design/tokens.md */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
+  --color-accent-yellow: var(--accent-yellow);
+  --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --font-sans: var(--font-albert), system-ui, arial, sans-serif;
+  --font-display: var(--font-unbounded), var(--font-albert), system-ui, sans-serif;
+  --radius-card: 8px;
+  --radius-button: 10px;
+  --radius-tile: 16px;
+  --shadow-hover: 0 4px 16px rgb(10 10 10 / 0.06);
+}
+
+:root {
+  --background: #fffdf3;
+  --foreground: #0a0a0a;
+  --card: #ffffff;
+  --muted: #f3f3f0;
+  --muted-foreground: #555b66;
+  --border: #e4e4e0;
+  --brand: #3f56d6;
+  --brand-soft: #eef0fd;
+  --accent-yellow: #ffd84d;
+  --destructive: #b42318;
+  --success: #12714a;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    font-family: var(--font-sans);
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+  }
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .btn {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: var(--radius-button);
+    border: 1px solid transparent;
+    padding: 0 24px;
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background-color 120ms, border-color 120ms;
+    cursor: pointer;
+  }
+  .btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+  .btn-primary {
+    background: var(--foreground);
+    color: #ffffff;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: #262626;
+  }
+  .btn-secondary {
+    background: var(--card);
+    border-color: var(--border);
+    color: var(--foreground);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--muted);
+  }
+  .btn-sm {
+    min-height: 40px;
+    padding: 0 16px;
+    font-size: 14px;
+  }
+  .field {
+    min-height: 44px;
+    width: 100%;
+    border-radius: var(--radius-card);
+    border: 1px solid #d4d4cf;
+    background: var(--card);
+    padding: 8px 12px;
+    font-size: 16px;
+    color: var(--foreground);
+  }
+  .field::placeholder {
+    color: #6b7180;
+  }
+  .card {
+    border-radius: var(--radius-card);
+    border: 1px solid var(--border);
+    background: var(--card);
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 8px;
+    background: var(--muted);
+    padding: 4px 8px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+  .display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+}
