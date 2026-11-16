@@ -1,0 +1,43 @@
+# Local development: Postgres + API + web.   docker compose up --build
+# Then seed and ingest from your machine:
+#   cd worker && DATABASE_URL=postgresql://jobs:jobs@localhost:5432/jobs uv run jobsworker seed
+#   cd worker && DATABASE_URL=postgresql://jobs:jobs@localhost:5432/jobs uv run jobsworker run
+# The passwords below are for local use only.
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: jobs
+      POSTGRES_USER: jobs
+      POSTGRES_PASSWORD: jobs
+    ports: ["5432:5432"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jobs -d jobs"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build: ./jobs
+    depends_on:
+      db: {condition: service_healthy}
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/jobs
+      SPRING_DATASOURCE_USERNAME: jobs
+      SPRING_DATASOURCE_PASSWORD: jobs
+      APP_PUBLIC_ORIGIN: http://localhost:3000
+      PROXY_SECRET: local-dev-secret
+    ports: ["8080:8080"]
+
+  web:
+    build: ./client
+    depends_on: [api]
+    environment:
+      API_ORIGIN: http://api:8080
+      PROXY_SECRET: local-dev-secret
+    ports: ["3000:3000"]
+
+volumes:
+  pgdata:
