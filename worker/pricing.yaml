@@ -1,0 +1,9 @@
+# USD per 1M tokens. Source: https://platform.claude.com/docs/en/about-claude/pricing
+# Values as of 2026-11-16. Re-check the pricing page before publishing cost numbers.
+usd_to_inr: 88.0   # placeholder rate; update before publishing (see docs/cost.md)
+batch_discount: 0.5
+models:
+  claude-haiku-5-5: {input: 0.10, output: 0.50}
+  claude-sonnet-5-5: {input: 2.00, output: 10.00}
+  claude-opus-5-5: {input: 4.00, output: 20.00}
+  heuristic-v1: {input: 0, output: 0}

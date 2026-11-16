@@ -1,0 +1,37 @@
+{
+  "__CLASS__": "Adzuna::API::Response::JobSearchResults",
+  "count": 2,
+  "mean": 310000,
+  "results": [
+    {
+      "__CLASS__": "Adzuna::API::Response::Job",
+      "id": "5012345678",
+      "adref": "eyJhbGciOiJIUzI1NiJ9.example",
+      "title": "Graduate <strong>Trainee</strong> Engineer",
+      "description": "We are hiring <strong>freshers</strong> for our Pune delivery centre. 0-1 years of experience. B.E./B.Tech 2026 batch can apply ...",
+      "created": "2026-11-14T09:21:44Z",
+      "redirect_url": "https://www.adzuna.in/land/ad/5012345678?se=example&utm_medium=api&utm_source=abc123",
+      "company": {"__CLASS__": "Adzuna::API::Response::Company", "display_name": "Example Tech Pvt Ltd"},
+      "location": {
+        "__CLASS__": "Adzuna::API::Response::Location",
+        "display_name": "Pune, Maharashtra",
+        "area": ["India", "Maharashtra", "Pune"]
+      },
+      "category": {"__CLASS__": "Adzuna::API::Response::Category", "label": "IT Jobs", "tag": "it-jobs"},
+      "contract_time": "full_time",
+      "salary_is_predicted": "0",
+      "latitude": 18.52,
+      "longitude": 73.85
+    },
+    {
+      "__CLASS__": "Adzuna::API::Response::Job",
+      "id": "5012345679",
+      "title": "Senior Sales Manager",
+      "description": "8+ years of enterprise sales experience required ...",
+      "created": "2026-11-13T05:00:00Z",
+      "redirect_url": "https://www.adzuna.in/land/ad/5012345679?se=example",
+      "company": {"display_name": "Another Co"},
+      "location": {"display_name": "Mumbai, Maharashtra", "area": ["India", "Maharashtra", "Mumbai"]}
+    }
+  ]
+}

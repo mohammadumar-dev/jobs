@@ -1,0 +1,121 @@
+{
+ "id": "744000161049334",
+ "name": "Senior Business Analyst",
+ "uuid": "9196b2b9-2d85-4960-85e8-b447e2839044",
+ "jobId": "17bec355-502a-4ee2-9c89-c80a159a6568",
+ "jobAdId": "deb1c3b1-33ee-40f7-b0c5-5dd68a960e2e",
+ "defaultJobAd": true,
+ "refNumber": "REF3676O",
+ "company": {
+  "name": "Endava",
+  "identifier": "Endava"
+ },
+ "location": {
+  "city": "Bengaluru",
+  "region": "Karnataka",
+  "country": "in",
+  "remote": false,
+  "hybrid": true,
+  "hybridDescription": "3 days WFO, 2 days WFH",
+  "fullLocation": "Bengaluru, Karnataka, India"
+ },
+ "customField": [
+  {
+   "fieldId": "COUNTRY",
+   "fieldLabel": "Country/Region",
+   "valueId": "in",
+   "valueLabel": "India"
+  },
+  {
+   "fieldId": "660e8f6e3cfd102cdad42d0f",
+   "fieldLabel": "Department",
+   "valueId": "10579005",
+   "valueLabel": "Client Delivery"
+  },
+  {
+   "fieldId": "660e8f6e3cfd102cdad42d0e",
+   "fieldLabel": "Brands",
+   "valueId": "default",
+   "valueLabel": "Endava"
+  },
+  {
+   "fieldId": "667bff6a43e111629f3b6071",
+   "fieldLabel": "Assignment Category",
+   "valueId": "full time indefinite",
+   "valueLabel": "full time indefinite"
+  },
+  {
+   "fieldId": "667bfecd7b4a6a6877cfa566",
+   "fieldLabel": "Discipline",
+   "valueId": "Analysis",
+   "valueLabel": "Analysis"
+  },
+  {
+   "fieldId": "667bff3cc61a5249a4538365",
+   "fieldLabel": "Worker/Person Type",
+   "valueId": "Employee",
+   "valueLabel": "Employee"
+  },
+  {
+   "fieldId": "667c00de83c5f33ac74fe01f",
+   "fieldLabel": "Core Skill - for non-billable roles select business support",
+   "valueId": "9d76fbdb-56bd-49a8-b8dd-7c3a632be75f",
+   "valueLabel": "Business Analysis"
+  }
+ ],
+ "releasedDate": "2026-11-11T09:32:33.421Z",
+ "creator": {
+  "name": "",
+  "avatarUrl": ""
+ },
+ "postingUrl": "https://jobs.smartrecruiters.com/Endava/744000161049334-senior-business-analyst",
+ "applyUrl": "https://jobs.smartrecruiters.com/Endava/744000161049334-senior-business-analyst?oga=true",
+ "referralUrl": "https://jobs.smartrecruiters.com/external-referrals/company/Endava/publication/9196b2b9-2d85-4960-85e8-b447e2839044?dcr_ci=Endava",
+ "jobAd": {
+  "sections": {
+   "companyDescription": {
+    "title": "Company Description",
+    "text": "<p>Technology is our how. And people are our why. For over two decades, we have been harnessing technology to drive meaningful change.<br>\n&#xa0;<br>\nBy combining world-class engineering, industry expertise and a people-centric mindset, we consult and partner with leading brands from various industries to create dynamic platforms and intelligent digital experiences that drive innovation and transform businesses.<br>\n&#xa0;<br>\nFrom prototype to real-world impact - be part of a global shift by doing work that matters.</p>"
+   },
+   "jobDescription": {
+    "title": "Job Description",
+    "text": "<p>Role Purpose</p><p>The Business Analyst will work with Prime Brokerage business, operations, technology, risk, finance and client-service teams to define and deliver platform and process improvements. The role requires a practical understanding of the end-to-end lifecycle supporting hedge funds and institutional clients, including trading, financing, margin, collateral, stock borrow, settlement, billing and reporting.</p><p>Key Responsibilities</p><ul><li>Gather, analyze and document business requirements for Prime Brokerage initiatives.</li><li>Work with Stock Loan, client service, operations, risk, treasury, finance and technology stakeholders.</li><li>Map end-to-end workflows across client onboarding, trade capture, allocation, confirmation, settlement and fails management.</li><li>Analyze securities finance processes, including stock borrow, locates, recalls, availability, rates, rebates and loan lifecycle events.</li><li>Define requirements for margin calculation, collateral management, cash financing, interest and corporate actions.</li><li>Produce business requirements documents, functional specifications, user stories, process maps and acceptance criteria.</li><li>Define data requirements, business rules, validations, controls and exception workflows.</li><li>Assess impacts across Prime Brokerage, books and records, stock record, securities finance, margin and risk, collateral, settlement, billing, finance and reporting systems.</li><li>Work with developers, architects and vendors to explain requirements and resolve design questions.</li><li>Support backlog prioritization, release planning, integration testing, user acceptance testing and defect resolution.</li><li>Reconcile trade, position, cash, margin, collateral and billing data across systems and investigate breaks.</li><li>Support implementation, operational readiness, procedure development, training and post-release analysis.</li><li>Identify opportunities for automation, straight-through processing, improved controls and better client servicing.</li></ul>"
+   },
+   "qualifications": {
+    "title": "Qualifications",
+    "text": "<p>Required Experience</p><ul><li>5–10 years of experience as a Business Analyst in investment banking, capital markets or financial services.</li><li>Experience writing detailed requirements and working with Agile or hybrid delivery teams.</li><li>Ability to create process diagrams, functional specifications, data mappings and test scenarios.</li><li>Strong SQL and data-analysis skills, including reconciliation and root-cause analysis.</li><li>Excellent written and verbal communication skills with the ability to work across global teams.</li></ul><p>Desirable Experience</p><ul><li>Practical experience with Prime Brokerage, Securities Services, Equity Finance or Securities Lending.</li><li>Strong understanding of the trade lifecycle from execution through settlement, accounting and reporting.</li><li>Knowledge of hedge fund operating models and prime brokerage relationships.</li><li>Experience with margin, collateral, financing, stock borrow or short-sale processes.</li><li>Equity swaps, CFDs, total return swaps or synthetic financing.</li><li>Reg SHO, short-sale controls, securities-lending regulation or related operational controls.</li><li>DTC, Euroclear or other settlement infrastructure.</li><li>EquiLend, Pirum, FIX, SWIFT or ISO 15022/20022 messaging.</li><li>Bloomberg or other market-data and client-connectivity platforms.</li><li>APIs, event-driven integration and cloud-based data platforms such as Databricks or Snowflake.</li><li>Delivery of workflow automation, intelligent operations or AI-assisted processing.</li><li>CFA, FRM, MBA Finance or another relevant professional qualification.</li></ul><p>Typical Deliverables</p><ul><li>Business requirements document and functional requirements specification</li><li>Current-state and future-state process maps</li><li>User stories, acceptance criteria and business rules</li><li>Data dictionary, source-to-target mappings and interface requirements</li><li>System impact assessment and exception/control matrix</li><li>Integration and user acceptance test scenarios</li><li>Reconciliation specifications and expected outcomes</li><li>Operational procedures, implementation notes and training materials</li></ul><p>Core Competencies</p><ul><li>Prime Brokerage domain knowledge</li><li>Requirements elicitation</li><li>Business-process modeling</li><li>Data analysis and reconciliation</li><li>Stakeholder management</li><li>Test planning and execution</li><li>Agile delivery</li><li>Clear documentation</li><li>Risk and control awareness</li><li>Ability to manage multiple workstreams</li></ul><p>Success Measures</p><ul><li>Requirements are complete, clear and delivered on schedule.</li><li>Business and technology teams share a common understanding of the solution.</li><li>Production defects, operational breaks and manual workarounds are reduced.</li><li>Trade, position, cash, margin, collateral and billing data are accurate and traceable.</li><li>Releases are implemented successfully with minimal business disruption.</li><li>Stakeholders and client-facing teams report improved service and operational efficiency.</li></ul><p>&#xa0;</p><p>Core Business Domains</p><p><strong>Prime Brokerage</strong></p><p>Hedge fund servicing, account structures, financing, custody, client service and operating model.</p><p><strong>Trade Lifecycle</strong></p><p>Execution, capture, allocation, confirmation, settlement, fails, position and cash updates.</p><p><strong>Securities Finance</strong></p><p>Borrow and loan lifecycle, availability, locates, recalls, rates, specials, rebates and fees.</p><p><strong>Margin and Collateral</strong></p><p>Initial and variation margin, collateral eligibility, substitutions, pledges, calls and disputes.</p><p><strong>Control and Reporting</strong></p><p>Reconciliations, exceptions, operational controls, management information and regulatory reporting.</p>"
+   },
+   "additionalInformation": {
+    "title": "Additional Information",
+    "text": "<p>&#xa0;</p><p>&#xa0;</p><div sr-tagline=\"\"></div><p>At Endava, we’re committed to creating an open, inclusive, and respectful environment where everyone feels safe, valued, and empowered to be their best. We welcome applications from people of all backgrounds, experiences, and perspectives—because we know that inclusive teams help us deliver smarter, more innovative solutions for our customers. Hiring decisions are based on merit, skills, qualifications, and potential. If you need adjustments or support during the recruitment process, please let us know.</p>"
+   }
+  }
+ },
+ "active": true,
+ "visibility": "PUBLIC",
+ "industry": {
+  "id": "it_and_services",
+  "label": "Information Technology And Services"
+ },
+ "function": {
+  "id": "information_technology",
+  "label": "Information Technology"
+ },
+ "department": {
+  "id": 10579005,
+  "label": "Client Delivery"
+ },
+ "experienceLevel": {
+  "id": "not_applicable",
+  "label": "Not Applicable"
+ },
+ "typeOfEmployment": {
+  "id": "intern",
+  "label": "Intern"
+ },
+ "language": {
+  "code": "en",
+  "label": "English",
+  "labelNative": "English (US)"
+ }
+}

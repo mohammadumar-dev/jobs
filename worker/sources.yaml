@@ -1,0 +1,65 @@
+# Seed for the `sources` table (`jobsworker seed`). Adding a source = adding a row.
+#
+# Every board below was checked with `jobsworker probe` on 2026-11-16 and had at
+# least one India entry-level posting that day. All use the provider's public,
+# documented job-posting API (see docs/architecture.md, "Sources and terms").
+# Do not add a source without an official API or clear permission.
+
+- key: adzuna:in
+  type: adzuna
+  config:
+    queries: [fresher, intern, internship, graduate trainee, entry level, junior]
+    max_pages: 3
+    max_days_old: 30
+
+# --- Greenhouse (boards-api.greenhouse.io) ---
+- {key: "greenhouse:stripe", type: greenhouse, config: {token: stripe, company: Stripe}}
+- {key: "greenhouse:rubrik", type: greenhouse, config: {token: rubrik, company: Rubrik}}
+- {key: "greenhouse:groww", type: greenhouse, config: {token: groww, company: Groww}}
+- {key: "greenhouse:mongodb", type: greenhouse, config: {token: mongodb, company: MongoDB}}
+- {key: "greenhouse:twilio", type: greenhouse, config: {token: twilio, company: Twilio}}
+- {key: "greenhouse:elastic", type: greenhouse, config: {token: elastic, company: Elastic}}
+- {key: "greenhouse:agoda", type: greenhouse, config: {token: agoda, company: Agoda}}
+- {key: "greenhouse:celonis", type: greenhouse, config: {token: celonis, company: Celonis}}
+- {key: "greenhouse:zetaglobal", type: greenhouse, config: {token: zetaglobal, company: Zeta Global}}
+- {key: "greenhouse:sigmoid", type: greenhouse, config: {token: sigmoid, company: Sigmoid}}
+- {key: "greenhouse:towerresearchcapital", type: greenhouse, config: {token: towerresearchcapital, company: Tower Research Capital}}
+- {key: "greenhouse:razorpay", type: greenhouse, config: {token: razorpaysoftwareprivatelimited, company: Razorpay}}
+- {key: "greenhouse:databricks", type: greenhouse, config: {token: databricks, company: Databricks}}
+- {key: "greenhouse:inmobi", type: greenhouse, config: {token: inmobi, company: InMobi}}
+
+# --- Lever (api.lever.co) ---
+- {key: "lever:paytm", type: lever, config: {site: paytm, company: Paytm}}
+- {key: "lever:hevodata", type: lever, config: {site: hevodata, company: Hevo Data}}
+- {key: "lever:gohighlevel", type: lever, config: {site: gohighlevel, company: HighLevel}}
+- {key: "lever:fampay", type: lever, config: {site: fampay, company: FamPay}}
+- {key: "lever:mindtickle", type: lever, config: {site: mindtickle, company: Mindtickle}}
+- {key: "lever:dnb", type: lever, config: {site: dnb, company: "Dun & Bradstreet"}}
+- {key: "lever:pattern", type: lever, config: {site: pattern, company: Pattern}}
+- {key: "lever:meesho", type: lever, config: {site: meesho, company: Meesho}}
+- {key: "lever:cred", type: lever, config: {site: cred, company: CRED}}
+
+# --- Ashby (api.ashbyhq.com) ---
+- {key: "ashby:sarvam", type: ashby, config: {name: sarvam, company: Sarvam AI}}
+- {key: "ashby:composio", type: ashby, config: {name: composio, company: Composio}}
+- {key: "ashby:atlan", type: ashby, config: {name: atlan, company: Atlan}}
+
+# --- SmartRecruiters (api.smartrecruiters.com) ---
+# max_details caps the per-posting detail requests (1 request/second).
+- {key: "smartrecruiters:BoschGroup", type: smartrecruiters, config: {company_id: BoschGroup, company: Bosch Group, max_details: 250}}
+- {key: "smartrecruiters:AccorHotel", type: smartrecruiters, config: {company_id: AccorHotel, company: Accor, max_details: 250}}
+- {key: "smartrecruiters:Intuitive", type: smartrecruiters, config: {company_id: Intuitive, company: Intuitive, max_details: 80}}
+- {key: "smartrecruiters:AbbVie", type: smartrecruiters, config: {company_id: AbbVie, company: AbbVie, max_details: 60}}
+- {key: "smartrecruiters:SopraSteria1", type: smartrecruiters, config: {company_id: SopraSteria1, company: Sopra Steria, max_details: 80}}
+- {key: "smartrecruiters:Continental", type: smartrecruiters, config: {company_id: Continental, company: Continental, max_details: 30}}
+- {key: "smartrecruiters:Eurofins", type: smartrecruiters, config: {company_id: Eurofins, company: Eurofins, max_details: 150}}
+- {key: "smartrecruiters:Sutherland", type: smartrecruiters, config: {company_id: Sutherland, company: Sutherland, max_details: 60}}
+- {key: "smartrecruiters:Experian", type: smartrecruiters, config: {company_id: Experian, company: Experian, max_details: 50}}
+- {key: "smartrecruiters:Unacademy", type: smartrecruiters, config: {company_id: Unacademy, company: Unacademy, max_details: 20}}
+- {key: "smartrecruiters:Swiggy", type: smartrecruiters, config: {company_id: Swiggy, company: Swiggy, max_details: 120}}
+- {key: "smartrecruiters:SGS", type: smartrecruiters, config: {company_id: SGS, company: SGS, max_details: 30}}
+- {key: "smartrecruiters:Endava", type: smartrecruiters, config: {company_id: Endava, company: Endava, max_details: 20}}
+- {key: "smartrecruiters:Ubisoft2", type: smartrecruiters, config: {company_id: Ubisoft2, company: Ubisoft, max_details: 20}}
+- {key: "smartrecruiters:Freshworks", type: smartrecruiters, config: {company_id: Freshworks, company: Freshworks, max_details: 40}}
+- {key: "smartrecruiters:NielsenIQ", type: smartrecruiters, config: {company_id: NielsenIQ, company: NielsenIQ, max_details: 80}}
+- {key: "smartrecruiters:ServiceNow", type: smartrecruiters, config: {company_id: ServiceNow, company: ServiceNow, max_details: 90}}

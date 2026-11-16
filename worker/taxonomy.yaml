@@ -1,0 +1,71 @@
+# Fixed taxonomy used by the pre-filter, dedupe key and the LLM tagger.
+# Changing this file changes tag values: bump PROMPT_VERSION in tagger.py.
+role_categories:
+  - software
+  - data
+  - design
+  - product
+  - marketing
+  - sales
+  - operations
+  - finance
+  - hr
+  - support
+  - content
+  - other
+
+work_modes: [onsite, hybrid, remote]
+job_types: [internship, full_time, contract]
+
+# canonical city -> state + aliases (lowercase, matched on word boundaries)
+cities:
+  Bengaluru: {state: Karnataka, aliases: [bengaluru, bangalore, bengalore]}
+  Mumbai: {state: Maharashtra, aliases: [mumbai, bombay, navi mumbai, thane]}
+  Delhi NCR: {state: Delhi, aliases: [delhi ncr, new delhi, delhi, gurgaon, gurugram, noida, greater noida, ghaziabad, faridabad]}
+  Hyderabad: {state: Telangana, aliases: [hyderabad, secunderabad]}
+  Pune: {state: Maharashtra, aliases: [pune, pimpri]}
+  Chennai: {state: Tamil Nadu, aliases: [chennai, madras]}
+  Kolkata: {state: West Bengal, aliases: [kolkata, calcutta]}
+  Ahmedabad: {state: Gujarat, aliases: [ahmedabad, gandhinagar]}
+  Jaipur: {state: Rajasthan, aliases: [jaipur]}
+  Kochi: {state: Kerala, aliases: [kochi, cochin, ernakulam]}
+  Thiruvananthapuram: {state: Kerala, aliases: [thiruvananthapuram, trivandrum]}
+  Coimbatore: {state: Tamil Nadu, aliases: [coimbatore]}
+  Indore: {state: Madhya Pradesh, aliases: [indore]}
+  Chandigarh: {state: Chandigarh, aliases: [chandigarh, mohali, panchkula]}
+  Lucknow: {state: Uttar Pradesh, aliases: [lucknow]}
+  Nagpur: {state: Maharashtra, aliases: [nagpur]}
+  Vadodara: {state: Gujarat, aliases: [vadodara, baroda]}
+  Surat: {state: Gujarat, aliases: [surat]}
+  Bhubaneswar: {state: Odisha, aliases: [bhubaneswar, bhubaneshwar]}
+  Visakhapatnam: {state: Andhra Pradesh, aliases: [visakhapatnam, vizag]}
+  Mysuru: {state: Karnataka, aliases: [mysuru, mysore]}
+  Mangaluru: {state: Karnataka, aliases: [mangaluru, mangalore]}
+  Bhopal: {state: Madhya Pradesh, aliases: [bhopal]}
+  Patna: {state: Bihar, aliases: [patna]}
+  Goa: {state: Goa, aliases: [goa, panaji]}
+  Nashik: {state: Maharashtra, aliases: [nashik]}
+  Guwahati: {state: Assam, aliases: [guwahati]}
+
+# Two extra values the tagger may return for `city`:
+#   Remote - fully remote within India, no base city
+#   Other  - an Indian location not in the list above, or unclear
+special_cities: [Remote, Other]
+
+# Used only to decide "is this job in India?" when no city matches.
+india_markers:
+  - india
+  - karnataka
+  - maharashtra
+  - telangana
+  - tamil nadu
+  - kerala
+  - gujarat
+  - rajasthan
+  - uttar pradesh
+  - haryana
+  - west bengal
+  - madhya pradesh
+  - andhra pradesh
+  - odisha
+  - punjab

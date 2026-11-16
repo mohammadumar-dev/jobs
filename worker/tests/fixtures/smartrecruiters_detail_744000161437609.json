@@ -1,0 +1,120 @@
+{
+ "id": "744000161437609",
+ "name": "Network Lead Engineer",
+ "uuid": "89eca12e-b810-47c7-9c86-f096fda8c401",
+ "jobId": "1c61a082-40e6-4d69-8aeb-cd1d24ec5ff3",
+ "jobAdId": "81f6ebf4-c656-4026-866c-3e18b6a50b3b",
+ "defaultJobAd": true,
+ "refNumber": "REF3679N",
+ "company": {
+  "name": "Endava",
+  "identifier": "Endava"
+ },
+ "location": {
+  "city": "Bengaluru",
+  "region": "Karnataka",
+  "country": "in",
+  "remote": false,
+  "hybrid": false,
+  "fullLocation": "Bengaluru, Karnataka, India"
+ },
+ "customField": [
+  {
+   "fieldId": "COUNTRY",
+   "fieldLabel": "Country/Region",
+   "valueId": "in",
+   "valueLabel": "India"
+  },
+  {
+   "fieldId": "660e8f6e3cfd102cdad42d0f",
+   "fieldLabel": "Department",
+   "valueId": "10579005",
+   "valueLabel": "Client Delivery"
+  },
+  {
+   "fieldId": "660e8f6e3cfd102cdad42d0e",
+   "fieldLabel": "Brands",
+   "valueId": "default",
+   "valueLabel": "Endava"
+  },
+  {
+   "fieldId": "667bff6a43e111629f3b6071",
+   "fieldLabel": "Assignment Category",
+   "valueId": "full time indefinite",
+   "valueLabel": "full time indefinite"
+  },
+  {
+   "fieldId": "667bfecd7b4a6a6877cfa566",
+   "fieldLabel": "Discipline",
+   "valueId": "Infrastructure",
+   "valueLabel": "Infrastructure"
+  },
+  {
+   "fieldId": "667bff3cc61a5249a4538365",
+   "fieldLabel": "Worker/Person Type",
+   "valueId": "Employee",
+   "valueLabel": "Employee"
+  },
+  {
+   "fieldId": "667c00de83c5f33ac74fe01f",
+   "fieldLabel": "Core Skill - for non-billable roles select business support",
+   "valueId": "3fc00ffb-16fb-4349-877d-644316498aed",
+   "valueLabel": "Infrastructure Support"
+  }
+ ],
+ "releasedDate": "2026-11-13T08:16:43.863Z",
+ "creator": {
+  "name": "",
+  "avatarUrl": ""
+ },
+ "postingUrl": "https://jobs.smartrecruiters.com/Endava/744000161437609-network-lead-engineer",
+ "applyUrl": "https://jobs.smartrecruiters.com/Endava/744000161437609-network-lead-engineer?oga=true",
+ "referralUrl": "https://jobs.smartrecruiters.com/external-referrals/company/Endava/publication/89eca12e-b810-47c7-9c86-f096fda8c401?dcr_ci=Endava",
+ "jobAd": {
+  "sections": {
+   "companyDescription": {
+    "title": "Company Description",
+    "text": "<p>Technology is our how. And people are our why. For over two decades, we have been harnessing technology to drive meaningful change.<br>\n&#xa0;<br>\nBy combining world-class engineering, industry expertise and a people-centric mindset, we consult and partner with leading brands from various industries to create dynamic platforms and intelligent digital experiences that drive innovation and transform businesses.<br>\n&#xa0;<br>\nFrom prototype to real-world impact - be part of a global shift by doing work that matters.</p>"
+   },
+   "jobDescription": {
+    "title": "Job Description",
+    "text": "<p>We are looking for an accomplished Network Automation &amp; Configuration Engineer with over 15 years of experience in IT infrastructure, automation, and network engineering.</p><p>You will be responsible for building robust automation workflows, integrating Rundeck with Ansible, and managing a wide range of network and security platforms to ensure smooth and secure operations across the enterprise.</p><p><strong>Key Responsibilities</strong></p><p>Rundeck orchestration, and hands-on skills with enterprise-grade network and security devices including Arista, Palo Alto, Check Point, Juniper, and Cisco (CCNA level).</p><p>Architect and implement Rundeck workflows integrated with Ansible for automated operations and self-service capabilities.</p><p>Knowledgeable on Develop, test, and manage Ansible playbooks and roles for system configuration, patching, software deployment, and infrastructure provisioning.</p><p>Understanding of Ansible provisioning, configuration management, and application deployment</p><p>Lead automation initiatives for configuration management across network and security devices including Arista, Palo Alto, Check Point, Juniper, and Cisco platforms.</p><p>Ensure best practices in configuration, versioning, documentation, and environment consistency.</p><p>Collaborate with infrastructure, application, and security teams to automate manual processes and improve response times.</p><p>Manage network configurations and troubleshoot issues in a multi-vendor environment.</p><p>Monitor and maintain Rundeck job performance and logging for auditing and incident resolution.</p><p>Assist with incident response, network change implementations, and post-mortem reviews from a configuration and automation perspective.<br>\n&#xa0;</p><p><strong>Manual Configuration:</strong><br>\nPerform assessment on base-level configurations, updates, and troubleshooting on various network and security platforms including:<br>\nCisco ASA: Firewalls, VPN, access control lists, and NAT configurations.<br>\nBlueCat: DNS, DHCP, and IP Address Management (IPAM) configurations.<br>\nCheckpoint: Firewall rule creation, VPN setup, and SmartConsole usage.<br>\nArista EOS: Basic routing, VLANs, and Layer 2/3 switch configurations.<br>\nF5 BIG-IP: Load balancing setup, SSL/TLS offloading, and iRules for traffic management.<br>\nCisco IOS and IOS-XE: Router and switch configurations, VLANs, and ACLs.<br>\nJuniper Junos: Routing, switching, and firewall base-level configurations.<br>\nCitrix NetScaler (ADC): Load balancing setup, SSL offloading, and WAF basics.<br>\nCisco NX-OS: Nexus switch configuration for data center environments.<br>\nPalo Alto PAN-OS: Firewall rule setup, VPNs, and security policies.<br>\nVersa (Secure SD-WAN and SASE): SD-WAN setup, routing, and VPN configurations.<br>\n&#xa0;</p>"
+   },
+   "qualifications": {
+    "title": "Qualifications",
+    "text": "<p><strong>Required Qualifications</strong></p><p>15+ years of hands-on experience in IT systems, network automation, and configuration management.</p><ul><li>Cisco Routing &amp; Switching, Network Security (Palo Alto, Firewall, ASA Firewall),</li><li>F5 LoadBalancer, Cisco (Services Protocols SNMP, SYSLOG, Line VTY, AAA - Clearpass) Nexus Switches, Cisco, AnyConnect, Network Monitoring Tools (Solarwinds, NNMi, HPNA, NetBrain, Nautobot, ForwardApp), Spectrum, Ticketing Tools like HPSM, ServiceNow</li><li>Routing Protocols - BGP, EIGRP</li><li>Lead Management (Security Compliance and Audit, Operational Management, Vulnerability Management, Configuration Management, CMDB)</li><li>Automation tool - SWIM, Rundeck,</li><li>Platforms: Netscaler, F5, Vesra</li><li>OS: IOS XE, IOS</li><li>ITIL Process</li></ul><p><u>knowledge of networking and security devices:</u></p><p>- Arista EOS and automation integration</p><p>- Palo Alto firewalls (PAN-OS configuration and updates)</p><p>- Check Point firewalls (policy management and CLI-based automation)</p><p>- Juniper devices (SRX, EX, automation via Netconf or Junos CLI)</p><p>- Cisco routers/switches at CCNA-level</p><p>- Strong scripting abilities (e.g., Bash, Python) for automation wrappers and tools.</p><p>-Familiarity with ITIL processes, change management, and access control best practices.</p><p><br>\n<u>Network and Security Administration:</u><br>\nMaintain base configurations for IP addressing, routing protocols, VLANs, and access control across multiple devices.<br>\nImplement security policies and rules, ensuring compliance with organizational standards.<br>\nConduct regular reviews and updates of base configurations to align with security policies and best practices.<br>\n<br>\n<br>\n<u>Documentation and Reporting:</u><br>\nDocument all configurations, changes, and procedures for audit and knowledge-sharing purposes.<br>\nGenerate configuration reports and provide updates on network status to team members and stakeholders.<br>\nAssist in building a repository of configurations, standards, and troubleshooting guides.<br>\n<br>\n<br>\n<u>Troubleshooting and Issue Resolution:</u><br>\nDiagnose and resolve configuration-related issues across platforms, using diagnostic tools and logs.<br>\nCollaborate with network engineers and IT teams to address escalated issues and optimize configurations.</p><p>&#xa0;</p><p>Years of Experience: 10-12</p>"
+   },
+   "additionalInformation": {
+    "title": "Additional Information",
+    "text": "<div sr-tagline=\"\"></div><p>At Endava, we’re committed to creating an open, inclusive, and respectful environment where everyone feels safe, valued, and empowered to be their best. We welcome applications from people of all backgrounds, experiences, and perspectives—because we know that inclusive teams help us deliver smarter, more innovative solutions for our customers. Hiring decisions are based on merit, skills, qualifications, and potential. If you need adjustments or support during the recruitment process, please let us know.</p>"
+   }
+  }
+ },
+ "active": true,
+ "visibility": "PUBLIC",
+ "industry": {
+  "id": "it_and_services",
+  "label": "Information Technology And Services"
+ },
+ "function": {
+  "id": "information_technology",
+  "label": "Information Technology"
+ },
+ "department": {
+  "id": 10579005,
+  "label": "Client Delivery"
+ },
+ "experienceLevel": {
+  "id": "mid_senior_level",
+  "label": "Mid-Senior Level"
+ },
+ "typeOfEmployment": {
+  "id": "permanent",
+  "label": "Full-time"
+ },
+ "language": {
+  "code": "en",
+  "label": "English",
+  "labelNative": "English (US)"
+ }
+}

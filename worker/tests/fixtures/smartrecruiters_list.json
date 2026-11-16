@@ -1,0 +1,192 @@
+{
+ "offset": 0,
+ "limit": 100,
+ "totalFound": 2,
+ "content": [
+  {
+   "id": "744000161437609",
+   "name": "Network Lead Engineer",
+   "uuid": "89eca12e-b810-47c7-9c86-f096fda8c401",
+   "jobAdId": "81f6ebf4-c656-4026-866c-3e18b6a50b3b",
+   "defaultJobAd": true,
+   "refNumber": "REF3679N",
+   "company": {
+    "identifier": "Endava",
+    "name": "Endava"
+   },
+   "releasedDate": "2026-11-13T08:16:43.863Z",
+   "location": {
+    "city": "Bengaluru",
+    "region": "Karnataka",
+    "country": "in",
+    "remote": false,
+    "hybrid": false,
+    "fullLocation": "Bengaluru, Karnataka, India"
+   },
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "department": {
+    "id": "10579005",
+    "label": "Client Delivery"
+   },
+   "function": {
+    "id": "information_technology",
+    "label": "Information Technology"
+   },
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "experienceLevel": {
+    "id": "mid_senior_level",
+    "label": "Mid-Senior Level"
+   },
+   "customField": [
+    {
+     "fieldId": "667bff6a43e111629f3b6071",
+     "fieldLabel": "Assignment Category",
+     "valueId": "full time indefinite",
+     "valueLabel": "full time indefinite"
+    },
+    {
+     "fieldId": "667bff3cc61a5249a4538365",
+     "fieldLabel": "Worker/Person Type",
+     "valueId": "Employee",
+     "valueLabel": "Employee"
+    },
+    {
+     "fieldId": "667c00de83c5f33ac74fe01f",
+     "fieldLabel": "Core Skill - for non-billable roles select business support",
+     "valueId": "3fc00ffb-16fb-4349-877d-644316498aed",
+     "valueLabel": "Infrastructure Support"
+    },
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "in",
+     "valueLabel": "India"
+    },
+    {
+     "fieldId": "660e8f6e3cfd102cdad42d0f",
+     "fieldLabel": "Department",
+     "valueId": "10579005",
+     "valueLabel": "Client Delivery"
+    },
+    {
+     "fieldId": "660e8f6e3cfd102cdad42d0e",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Endava"
+    },
+    {
+     "fieldId": "667bfecd7b4a6a6877cfa566",
+     "fieldLabel": "Discipline",
+     "valueId": "Infrastructure",
+     "valueLabel": "Infrastructure"
+    }
+   ],
+   "visibility": "PUBLIC",
+   "ref": "https://api.smartrecruiters.com/v1/companies/Endava/postings/744000161437609",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   }
+  },
+  {
+   "id": "744000161049334",
+   "name": "Senior Business Analyst",
+   "uuid": "9196b2b9-2d85-4960-85e8-b447e2839044",
+   "jobAdId": "deb1c3b1-33ee-40f7-b0c5-5dd68a960e2e",
+   "defaultJobAd": true,
+   "refNumber": "REF3676O",
+   "company": {
+    "identifier": "Endava",
+    "name": "Endava"
+   },
+   "releasedDate": "2026-11-11T09:32:33.421Z",
+   "location": {
+    "city": "Bengaluru",
+    "region": "Karnataka",
+    "country": "in",
+    "remote": false,
+    "hybrid": true,
+    "hybridDescription": "3 days WFO, 2 days WFH",
+    "fullLocation": "Bengaluru, Karnataka, India"
+   },
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "department": {
+    "id": "10579005",
+    "label": "Client Delivery"
+   },
+   "function": {
+    "id": "information_technology",
+    "label": "Information Technology"
+   },
+   "typeOfEmployment": {
+    "id": "intern",
+    "label": "Intern"
+   },
+   "experienceLevel": {
+    "id": "not_applicable",
+    "label": "Not Applicable"
+   },
+   "customField": [
+    {
+     "fieldId": "667bff6a43e111629f3b6071",
+     "fieldLabel": "Assignment Category",
+     "valueId": "full time indefinite",
+     "valueLabel": "full time indefinite"
+    },
+    {
+     "fieldId": "667bff3cc61a5249a4538365",
+     "fieldLabel": "Worker/Person Type",
+     "valueId": "Employee",
+     "valueLabel": "Employee"
+    },
+    {
+     "fieldId": "667c00de83c5f33ac74fe01f",
+     "fieldLabel": "Core Skill - for non-billable roles select business support",
+     "valueId": "9d76fbdb-56bd-49a8-b8dd-7c3a632be75f",
+     "valueLabel": "Business Analysis"
+    },
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "in",
+     "valueLabel": "India"
+    },
+    {
+     "fieldId": "660e8f6e3cfd102cdad42d0f",
+     "fieldLabel": "Department",
+     "valueId": "10579005",
+     "valueLabel": "Client Delivery"
+    },
+    {
+     "fieldId": "660e8f6e3cfd102cdad42d0e",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Endava"
+    },
+    {
+     "fieldId": "667bfecd7b4a6a6877cfa566",
+     "fieldLabel": "Discipline",
+     "valueId": "Analysis",
+     "valueLabel": "Analysis"
+    }
+   ],
+   "visibility": "PUBLIC",
+   "ref": "https://api.smartrecruiters.com/v1/companies/Endava/postings/744000161049334",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   }
+  }
+ ]
+}
