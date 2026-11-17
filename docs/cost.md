@@ -3,16 +3,28 @@
 **Status: not measured yet.** No LLM API key has been configured, so every tag
 currently in the database was produced by the rule-based fallback
 (`model = heuristic-v1`), which costs nothing and is not what this page is about.
+
+**Provider.** Tagging runs on free tiers (Gemini, then Groq, then the OpenRouter
+free router; see `worker/src/jobsworker/llm_free.py`), because paying for the
+Claude API needs an international card. Free-tier calls cost $0, so the USD column
+will read 0 for them; token counts are still stored per row in `job_tags`, so the
+cost of the same volume on a paid model can be worked out from `worker/pricing.yaml`.
+The `model` column records which provider tagged each row, and accuracy should be
+reported per model.
 The numbers below are filled in from script output only; nothing here is estimated
 from memory.
 
 ## How to produce the numbers
 
-1. Put `LLM_API_KEY` in `worker/.env`, then tag the active jobs with the model:
+1. Put at least one of `GEMINI_API_KEY`, `GROQ_API_KEY`, `OPENROUTER_API_KEY` in
+   `worker/.env`, then tag:
 
        cd worker
-       uv run python -c "from jobsworker import db; from jobsworker.config import Settings; c = db.connect(Settings.from_env().database_url); c.execute(\"delete from job_tags where model = 'heuristic-v1'\")"
        uv run jobsworker tag
+
+   An LLM tagger also re-tags rows that only have a rule-based tag, up to
+   `LLM_MAX_JOBS` (default 300) per run. Repeat on later days until
+   `select model, count(*) from job_tags group by 1` shows no `heuristic-v1` rows.
 
 2. Export the blind labelling sheet (50 jobs, fixed seed):
 

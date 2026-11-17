@@ -46,14 +46,25 @@ def main() -> int:
     inr = pricing["usd_to_inr"]
     report = {"usd_to_inr": inr, "models": []}
     for row in by_model:
-        price = pricing["models"].get(row["model"])
+        free = row["model"].startswith(tuple(pricing.get("free_tier_prefixes") or ()))
+        price = {"input": 0, "output": 0} if free else pricing["models"].get(row["model"])
         if price is None:
             print(f"{row['model']}: no price in pricing.yaml, skipped")
             continue
         per_post = (float(row["avg_in"]) * price["input"] + float(row["avg_out"]) * price["output"]) / 1e6
         per_1000 = per_post * 1000
         batch = per_1000 * pricing["batch_discount"]
+        extra = {}
+        if free:
+            # What the same token volume would cost on the paid reference model.
+            ref = pricing.get("reference_model", "claude-haiku-5-5")
+            rp = pricing["models"][ref]
+            eq = (float(row["avg_in"]) * rp["input"] + float(row["avg_out"]) * rp["output"]) / 1e3
+            extra = {"free_tier": True, "paid_equivalent_model": ref,
+                     "paid_equivalent_usd_per_1000": round(eq, 4)}
+            print(f"{row['model']}: free tier ($0); same tokens on {ref}: ${eq:.4f} per 1,000 posts")
         report["models"].append({
+            **extra,
             "model": row["model"], "posts": row["n"],
             "avg_input_tokens": round(float(row["avg_in"])),
             "avg_output_tokens": round(float(row["avg_out"])),

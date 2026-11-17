@@ -127,3 +127,21 @@ def test_failing_source_does_not_stop_the_run_or_deactivate_its_jobs(world):
     assert result["errors"] == [{"source": "b", "error": "RuntimeError: boom"}]
     assert count(conn, "is_active") == 3  # an outage is not two misses
     assert result["fetched"] == 4  # source a still ran
+
+
+class FakeLlmTagger(HeuristicTagger):
+    """Behaves like an LLM tagger: a non-heuristic model name."""
+
+    model = "gemini/test-model"
+
+
+def test_llm_tagger_upgrades_rule_based_tags(world, settings, taxonomy):
+    conn, run, _ = world
+    run()  # everything tagged by the rule-based tagger
+    llm = FakeLlmTagger(taxonomy)
+    tagged, cost, errors = pipeline.tag_pending(conn, llm, settings)
+    assert tagged == 3 and errors == []
+    models = {r["model"] for r in conn.execute("select model from job_tags").fetchall()}
+    assert models == {"gemini/test-model"}
+    # nothing left to do on the next pass
+    assert pipeline.tag_pending(conn, llm, settings)[0] == 0

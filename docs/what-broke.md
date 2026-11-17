@@ -101,3 +101,16 @@ Real failures hit while building, in order. Kept for the video walkthrough.
 - **Cause:** the first `uv sync` ran before `src/jobsworker/` was created, so the
   editable install pointed at nothing.
 - **Fix:** `uv sync --reinstall-package jobsworker`.
+
+## 12. The planned LLM provider could not be paid for
+
+- **Symptom:** Anthropic API credits are prepaid and, from India, need a credit or
+  debit card that works internationally; UPI is not accepted. No card was available.
+- **Fix:** tagging now uses a chain of free tiers: Gemini, then Groq, then the
+  OpenRouter free router, then the rule-based tagger. A provider that hits a rate
+  limit, quota or auth error is dropped for the rest of the run; a job that no
+  provider can tag gets a rule-based tag and is re-queued for an LLM on the next run.
+  The Claude tagger is still there (`LLM_PROVIDER=anthropic`).
+- **Trade-off:** free tiers have small daily limits (Groq about 200k tokens a day,
+  OpenRouter about 50 requests a day without credits), so a large backlog takes
+  several daily runs, and accuracy has to be measured per model.

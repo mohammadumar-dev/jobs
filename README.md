@@ -69,8 +69,11 @@ Worker and API tests start their own embedded Postgres; no setup needed.
 
 - **Adzuna keys** (`ADZUNA_APP_ID`, `ADZUNA_APP_KEY`): the Adzuna source is skipped
   without them, and it is the source that takes the site past 200 jobs.
-- **LLM key** (`LLM_API_KEY`): without it jobs are tagged by a rule-based fallback,
-  not the model.
+- **LLM keys** (free, no card): any of `GEMINI_API_KEY` (aistudio.google.com),
+  `GROQ_API_KEY` (console.groq.com) and `OPENROUTER_API_KEY` (openrouter.ai). The
+  worker tries them in that order and falls back to a rule-based tagger; rows tagged
+  by the fallback are re-tagged by an LLM on later runs. `LLM_PROVIDER=anthropic`
+  with `LLM_API_KEY` switches to paid Claude tagging instead.
 - **Google OAuth client** for "Continue with Google".
 - Hosting accounts for the API and the web app, and the GitHub Actions secrets for
   the daily run. See "Deployment" in [docs/architecture.md](docs/architecture.md).

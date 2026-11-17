@@ -1,7 +1,8 @@
 """Tag jobs with a fixed taxonomy.
 
-Two taggers share one interface:
-  AnthropicTagger  - the real one (structured JSON output, pydantic-validated)
+Taggers share one interface:
+  ChainTagger      - free tiers: Gemini -> Groq -> OpenRouter -> rules (llm_free.py)
+  AnthropicTagger  - Claude (structured JSON output, pydantic-validated)
   HeuristicTagger  - rule-based, zero cost; used when no LLM key is configured so
                      local dev works. Never use its output for accuracy numbers.
 """
@@ -145,6 +146,7 @@ class Tagged:
     input_tokens: int
     output_tokens: int
     batched: bool = False
+    model: str = ""  # set when one tagger can use several models (free chain)
 
 
 @dataclass
@@ -175,12 +177,19 @@ def load_pricing(path: Path) -> dict[str, Any]:
 
 
 def cost_usd(pricing: dict[str, Any], model: str, tagged: list[Tagged]) -> float:
-    price = pricing["models"].get(model)
-    if price is None:
-        log.warning("no price configured for model %s; cost recorded as 0", model)
-        return 0.0
+    free = tuple(pricing.get("free_tier_prefixes") or ())
     total = 0.0
+    warned: set[str] = set()
     for t in tagged:
+        name = t.model or model
+        if free and name.startswith(free):
+            continue  # free-tier API: $0
+        price = pricing["models"].get(name)
+        if price is None:
+            if name not in warned:
+                log.warning("no price configured for model %s; cost recorded as 0", name)
+                warned.add(name)
+            continue
         usd = (t.input_tokens * price["input"] + t.output_tokens * price["output"]) / 1_000_000
         total += usd * (pricing.get("batch_discount", 0.5) if t.batched else 1.0)
     return round(total, 6)
@@ -397,6 +406,10 @@ class AnthropicTagger:
 
 
 def make_tagger(settings: Settings, taxonomy: Taxonomy) -> Tagger:
+    if settings.llm_provider == "chain":
+        from .llm_free import make_chain_tagger
+
+        return make_chain_tagger(settings, taxonomy)
     if settings.llm_provider == "anthropic":
         return AnthropicTagger(settings, taxonomy)
     if settings.llm_provider == "none":

@@ -188,12 +188,17 @@ def deactivate_stale(
         return n + cur.rowcount
 
 
-def jobs_needing_tags(conn: psycopg.Connection, limit: int | None = None) -> list[dict[str, Any]]:
-    sql = """
+def jobs_needing_tags(
+    conn: psycopg.Connection, limit: int | None = None, upgrade: bool = False
+) -> list[dict[str, Any]]:
+    """Active canonical jobs with no tags. With upgrade=True, also jobs that only have
+    a rule-based tag, so an LLM replaces it once one is available (untagged first)."""
+    extra = " or t.model = 'heuristic-v1'" if upgrade else ""
+    sql = f"""
         select j.id, j.title, j.company, j.location_raw, j.description_text
           from jobs j left join job_tags t on t.job_id = j.id
-         where j.is_active and j.canonical_job_id is null and t.job_id is null
-         order by j.first_seen_at, j.id
+         where j.is_active and j.canonical_job_id is null and (t.job_id is null{extra})
+         order by (t.job_id is not null), j.first_seen_at, j.id
     """
     if limit:
         sql += f" limit {int(limit)}"

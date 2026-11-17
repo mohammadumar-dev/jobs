@@ -44,8 +44,12 @@ def collect(
 def tag_pending(
     conn: psycopg.Connection, tagger: Tagger, settings: Settings, limit: int | None = None
 ) -> tuple[int, float, list[dict[str, Any]]]:
-    """Step 6: tag active, canonical jobs that have no tags (new, or content changed)."""
-    jobs = db.jobs_needing_tags(conn, limit)
+    """Step 6: tag active, canonical jobs that have no tags (new, or content changed).
+
+    A real LLM tagger also re-tags rows that only have a rule-based fallback tag.
+    """
+    upgrade = tagger.model != "heuristic-v1"
+    jobs = db.jobs_needing_tags(conn, limit or (settings.llm_max_jobs if upgrade else None), upgrade)
     if not jobs:
         return 0, 0.0, []
     log.info("tagging %d jobs with %s", len(jobs), tagger.model)
@@ -57,7 +61,7 @@ def tag_pending(
                 t.job_id,
                 {
                     **t.tag.model_dump(),
-                    "model": tagger.model,
+                    "model": t.model or tagger.model,
                     "prompt_version": _prompt_version(),
                     "input_tokens": t.input_tokens,
                     "output_tokens": t.output_tokens,

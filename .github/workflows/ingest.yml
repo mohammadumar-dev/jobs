@@ -15,7 +15,7 @@ concurrency:
 jobs:
   ingest:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 120  # free tiers are paced slowly
     defaults:
       run:
         working-directory: worker
@@ -23,6 +23,12 @@ jobs:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
       ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+      # Free-tier tagging chain: Gemini -> Groq -> OpenRouter -> rule-based fallback.
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      # Optional paid alternative: set vars.LLM_PROVIDER=anthropic and secrets.LLM_API_KEY.
+      LLM_PROVIDER: ${{ vars.LLM_PROVIDER }}
       LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
       LLM_MODEL: ${{ vars.LLM_MODEL || 'claude-haiku-5-5' }}
       CONTACT_URL: ${{ vars.CONTACT_URL }}
