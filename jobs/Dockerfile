@@ -1,5 +1,7 @@
 # Build
 FROM amazoncorretto:25 AS build
+# The minimal Amazon Linux base has no tar/gzip; the Maven wrapper needs them.
+RUN yum install -y tar gzip && yum clean all
 WORKDIR /src
 COPY .mvn .mvn
 COPY mvnw pom.xml ./

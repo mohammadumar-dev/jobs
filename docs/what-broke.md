@@ -114,3 +114,16 @@ Real failures hit while building, in order. Kept for the video walkthrough.
 - **Trade-off:** free tiers have small daily limits (Groq about 200k tokens a day,
   OpenRouter about 50 requests a day without credits), so a large backlog takes
   several daily runs, and accuracy has to be measured per model.
+
+## 13. First Render deploy failed twice
+
+- **Symptom 1:** `open Dockerfile: no such file or directory`.
+  **Cause:** the service was created as a plain Web Service, which builds from the
+  repository root; the API's Dockerfile is in `jobs/`.
+  **Fix:** Root Directory `jobs` (also set as `rootDir` in `render.yaml`).
+- **Symptom 2:** `./mvnw: line 256: tar: command not found`.
+  **Cause:** the `amazoncorretto:25` image is minimal Amazon Linux without `tar` or
+  `gzip`, which the Maven wrapper needs to unpack Maven. The Dockerfile had never
+  been built before (no Docker on the dev machine).
+  **Fix:** `yum install -y tar gzip` in the build stage; added a `.dockerignore`
+  so `.env` and `target/` never enter the build context.
