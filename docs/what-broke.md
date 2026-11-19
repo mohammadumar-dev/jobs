@@ -139,3 +139,15 @@ Real failures hit while building, in order. Kept for the video walkthrough.
 - **Fix:** tags are saved every 10 jobs, the connection is checked and reopened
   before each save and before the run is recorded, and TCP keepalives are on.
   Test: `test_tags_survive_a_dropped_connection`.
+
+## 15. Title guard turned "Graduate Engineer Trainee" jobs into internships
+
+- **Symptom:** the first run with Adzuna logged `22 corrected by guards`, all
+  `job_type full_time->internship`, all titles like "Graduate Engineer Trainee".
+- **Cause:** the guard reused the pre-filter's INTERN pattern, which includes
+  "trainee". In India a Graduate (Engineer) Trainee is a full-time entry-level job;
+  the model had it right.
+- **Fix:** only intern/internship/apprentice titles force `internship`; trainee titles
+  still force `is_fresher=true`. The 22 rows were set back to `full_time` with one
+  SQL update by id. Lesson: check what a guard changes on real data before trusting
+  it; the per-fix log line made this visible within one run.

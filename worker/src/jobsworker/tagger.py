@@ -211,6 +211,11 @@ def build_user_message(job: dict[str, Any]) -> str:
     )
 
 
+_INTERNSHIP_TITLE = re.compile(
+    r"\b(intern|interns|internship|internships|apprentice|apprenticeship)\b", re.IGNORECASE
+)
+
+
 def apply_guards(tag: TagResult, job: dict[str, Any]) -> list[str]:
     """Fix answers that contradict the job title or the model's own numbers.
 
@@ -221,7 +226,13 @@ def apply_guards(tag: TagResult, job: dict[str, Any]) -> list[str]:
     title = job.get("title") or ""
     fixes: list[str] = []
     if INTERN.search(title):
-        if tag.job_type != "internship" and not re.search(r"\bcontract\b", title, re.IGNORECASE):
+        # "Graduate (Engineer) Trainee" is a full-time entry-level job in India, so only
+        # intern/apprentice titles force the internship type; every such title is fresher.
+        if (
+            tag.job_type != "internship"
+            and _INTERNSHIP_TITLE.search(title)
+            and not re.search(r"\bcontract\b", title, re.IGNORECASE)
+        ):
             fixes.append(f"job_type {tag.job_type}->internship")
             tag.job_type = "internship"
         if not tag.is_fresher:

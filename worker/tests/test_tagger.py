@@ -184,6 +184,11 @@ def test_guards_fix_contradictions(taxonomy):
     tag = validate_tag({**GOOD, "job_type": "full_time", "is_fresher": True}, taxonomy)
     assert apply_guards(tag, {"title": "Graduate Engineer"}) == []
 
+    # a Graduate Engineer Trainee is a full-time job in India: type kept, fresher forced
+    tag = validate_tag({**GOOD, "job_type": "full_time", "is_fresher": False}, taxonomy)
+    assert apply_guards(tag, {"title": "Graduate Engineer Trainee - Design"}) == ["is_fresher false->true"]
+    assert tag.job_type == "full_time" and tag.is_fresher is True
+
 
 def test_cost_uses_batch_discount(settings):
     pricing = load_pricing(settings.pricing_path)
