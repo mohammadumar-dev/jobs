@@ -2,7 +2,8 @@ name: ingest
 
 on:
   schedule:
-    - cron: "0 21 * * *" # 02:30 IST daily (GitHub cron is UTC)
+    # 21:17 UTC = 02:47 IST daily. An odd minute: GitHub delays top-of-hour schedules most.
+    - cron: "17 21 * * *"
   workflow_dispatch:
 
 permissions:

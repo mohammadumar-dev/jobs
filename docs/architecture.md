@@ -1,7 +1,7 @@
 # Architecture
 
 ```
-  GitHub Actions (cron 21:00 UTC = 02:30 IST, + manual)
+  GitHub Actions (cron 21:17 UTC = 02:47 IST, + manual)
             |
             v
   worker/  Python 3.12 -----fetch----> Adzuna IN, Greenhouse, Lever, Ashby, SmartRecruiters

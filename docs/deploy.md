@@ -10,7 +10,7 @@ browser ──https──▶ Vercel: Next.js (client/)
                      ▼
                    Render: Spring Boot API (jobs/) ──TLS──▶ Neon Postgres
                                                               ▲
-GitHub Actions, daily 02:30 IST: Python worker (worker/) ─────┘
+GitHub Actions, daily 02:47 IST: Python worker (worker/) ─────┘
 ```
 
 **Why there is no CORS setting.** The browser only ever talks to the Vercel
@@ -89,7 +89,7 @@ Optional **variables**: `CONTACT_URL` (sent in the crawler User-Agent, e.g. the
 site's about page).
 
 Then **Actions, ingest, Run workflow** once to check it; after that it runs daily
-at 21:00 UTC (02:30 IST). Each run's summary is in the job log (Stats step) and in
+at 21:17 UTC (02:47 IST; GitHub may start it later). Each run's summary is in the job log (Stats step) and in
 the `ingest_runs` table.
 
 ## 5. Google login (optional)
