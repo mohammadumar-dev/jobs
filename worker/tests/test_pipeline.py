@@ -139,9 +139,32 @@ def test_llm_tagger_upgrades_rule_based_tags(world, settings, taxonomy):
     conn, run, _ = world
     run()  # everything tagged by the rule-based tagger
     llm = FakeLlmTagger(taxonomy)
-    tagged, cost, errors = pipeline.tag_pending(conn, llm, settings)
+    tagged, cost, errors, _ = pipeline.tag_pending(conn, llm, settings)
     assert tagged == 3 and errors == []
     models = {r["model"] for r in conn.execute("select model from job_tags").fetchall()}
     assert models == {"gemini/test-model"}
     # nothing left to do on the next pass
     assert pipeline.tag_pending(conn, llm, settings)[0] == 0
+
+
+def test_tags_survive_a_dropped_connection(world, settings, taxonomy, pg_uri, monkeypatch):
+    """Neon closes idle connections during long free-tier tagging; the run must
+    reconnect, keep the tags of every batch, and still record the run."""
+    from dataclasses import replace
+
+    conn, _, _ = world
+    monkeypatch.setattr(pipeline, "TAG_BATCH", 2)
+    s = replace(settings, database_url=pg_uri)
+    side = db.connect(pg_uri)
+
+    class DroppingTagger(FakeLlmTagger):
+        def tag_many(self, jobs):
+            conn.close()  # simulate the server cutting the idle connection
+            return super().tag_many(jobs)
+
+    result = pipeline.run(s, conn, http=object(), tagger=DroppingTagger(taxonomy))
+    assert result["tagged"] == 3
+    assert result["tagged_total"] == 3
+    row = side.execute("select finished_at, tagged from ingest_runs").fetchone()
+    assert row["finished_at"] is not None and row["tagged"] == 3
+    side.close()

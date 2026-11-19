@@ -41,34 +41,47 @@ def collect(
     return len(raws), list(kept.values())
 
 
+TAG_BATCH = 10  # jobs per LLM batch; tags are saved after each one
+
+
 def tag_pending(
     conn: psycopg.Connection, tagger: Tagger, settings: Settings, limit: int | None = None
-) -> tuple[int, float, list[dict[str, Any]]]:
+) -> tuple[int, float, list[dict[str, Any]], psycopg.Connection]:
     """Step 6: tag active, canonical jobs that have no tags (new, or content changed).
 
     A real LLM tagger also re-tags rows that only have a rule-based fallback tag.
+    Free-tier tagging is slow (minutes per batch), so tags are saved batch by batch
+    and the connection is reopened if the database closed it in the meantime.
+    Returns the connection in use, which may be a new one.
     """
     upgrade = tagger.model != "heuristic-v1"
     jobs = db.jobs_needing_tags(conn, limit or (settings.llm_max_jobs if upgrade else None), upgrade)
     if not jobs:
-        return 0, 0.0, []
+        return 0, 0.0, [], conn
     log.info("tagging %d jobs with %s", len(jobs), tagger.model)
-    outcome = tagger.tag_many(jobs)
-    with conn.transaction():
-        for t in outcome.tagged:
-            db.save_tag(
-                conn,
-                t.job_id,
-                {
-                    **t.tag.model_dump(),
-                    "model": t.model or tagger.model,
-                    "prompt_version": _prompt_version(),
-                    "input_tokens": t.input_tokens,
-                    "output_tokens": t.output_tokens,
-                },
-            )
-    cost = cost_usd(load_pricing(settings.pricing_path), tagger.model, outcome.tagged)
-    return len(outcome.tagged), cost, outcome.errors
+    pricing = load_pricing(settings.pricing_path)
+    tagged, cost, errors = 0, 0.0, []
+    for i in range(0, len(jobs), TAG_BATCH):
+        outcome = tagger.tag_many(jobs[i : i + TAG_BATCH])
+        conn = db.ensure_open(conn, settings.database_url)
+        with conn.transaction():
+            for t in outcome.tagged:
+                db.save_tag(
+                    conn,
+                    t.job_id,
+                    {
+                        **t.tag.model_dump(),
+                        "model": t.model or tagger.model,
+                        "prompt_version": _prompt_version(),
+                        "input_tokens": t.input_tokens,
+                        "output_tokens": t.output_tokens,
+                    },
+                )
+        tagged += len(outcome.tagged)
+        cost += cost_usd(pricing, tagger.model, outcome.tagged)
+        errors.extend(outcome.errors)
+        log.info("tagged %d/%d", tagged, len(jobs))
+    return tagged, cost, errors, conn
 
 
 def _prompt_version() -> str:
@@ -92,6 +105,7 @@ def run(
         "fetched": 0, "new": 0, "updated": 0, "deactivated": 0, "tagged": 0,
         "llm_cost_usd": 0.0, "errors": [],
     }
+    original_conn = conn
     run_id, _started = db.start_run(conn)
     ok_ids: list[int] = []
     ok_keys: set[str] = set()
@@ -135,7 +149,7 @@ def run(
         if do_tag:
             try:
                 tagger = tagger or make_tagger(settings, taxonomy)
-                tagged, cost, errors = tag_pending(conn, tagger, settings)
+                tagged, cost, errors, conn = tag_pending(conn, tagger, settings)
                 counts["tagged"] = tagged
                 counts["llm_cost_usd"] = cost
                 counts["errors"].extend(errors[:50])
@@ -146,7 +160,11 @@ def run(
                 )
     finally:
         # 8. always record the run, even a broken one
+        conn = db.ensure_open(conn, settings.database_url)
         db.finish_run(conn, run_id, counts)
         if own_http:
             http.close()
-    return {"run_id": run_id, **counts, **db.stats(conn)}
+    result = {"run_id": run_id, **counts, **db.stats(conn)}
+    if conn is not original_conn:
+        conn.close()
+    return result

@@ -51,9 +51,11 @@ def main(argv: list[str] | None = None) -> int:
                 return 1
         elif args.cmd == "tag":
             taxonomy = load_taxonomy(settings.taxonomy_path)
-            tagged, cost, errors = pipeline.tag_pending(
+            tagged, cost, errors, conn2 = pipeline.tag_pending(
                 conn, make_tagger(settings, taxonomy), settings, args.limit
             )
+            if conn2 is not conn:
+                conn2.close()
             print(json.dumps({"tagged": tagged, "llm_cost_usd": cost, "errors": errors}, indent=2))
         elif args.cmd == "stats":
             print(json.dumps(db.stats(conn), default=str, indent=2))

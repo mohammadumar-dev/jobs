@@ -127,3 +127,15 @@ Real failures hit while building, in order. Kept for the video walkthrough.
   been built before (no Docker on the dev machine).
   **Fix:** `yum install -y tar gzip` in the build stage; added a `.dockerignore`
   so `.env` and `target/` never enter the build context.
+
+## 14. First production ingest lost every tag
+
+- **Symptom:** the GitHub Actions run fetched 146 jobs and tagged 132 (124 Gemini,
+  8 Groq), then failed with `SSL connection has been closed unexpectedly` /
+  `the connection is closed`; `tagged_total` stayed 0.
+- **Cause:** with free-tier rate limits, tagging took 38 minutes. The worker held
+  one Neon connection idle for all of it and saved every tag in a single
+  transaction at the end; Neon had closed the idle connection by then.
+- **Fix:** tags are saved every 10 jobs, the connection is checked and reopened
+  before each save and before the run is recorded, and TCP keepalives are on.
+  Test: `test_tags_survive_a_dropped_connection`.

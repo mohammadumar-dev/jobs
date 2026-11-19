@@ -1,6 +1,7 @@
 """All SQL the worker runs. The worker is the only writer to the job tables."""
 from __future__ import annotations
 
+import contextlib
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
@@ -17,7 +18,26 @@ def connect(database_url: str) -> psycopg.Connection:
         raise RuntimeError("DATABASE_URL is not set")
     # autocommit: every write below is either a single statement or an explicit
     # `conn.transaction()` block, so one source failing can never roll back another.
-    return psycopg.connect(database_url, row_factory=dict_row, autocommit=True)
+    # TCP keepalives stop idle connections being cut while the LLM step runs.
+    return psycopg.connect(
+        database_url, row_factory=dict_row, autocommit=True,
+        keepalives=1, keepalives_idle=30, keepalives_interval=10, keepalives_count=5,
+    )
+
+
+def ensure_open(conn: psycopg.Connection, database_url: str) -> psycopg.Connection:
+    """Return `conn` if it still works, else a new connection (Neon drops idle ones)."""
+    try:
+        if not conn.closed:
+            conn.execute("select 1")
+            return conn
+    except psycopg.OperationalError:
+        pass
+    if not database_url:
+        raise psycopg.OperationalError("connection lost and DATABASE_URL is not set")
+    with contextlib.suppress(Exception):
+        conn.close()
+    return connect(database_url)
 
 
 # ---- sources -------------------------------------------------------------
