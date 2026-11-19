@@ -1,6 +1,6 @@
 import "server-only";
 import { headers } from "next/headers";
-import type { JobDetail, JobFilters, JobPage, Meta } from "./types";
+import type { JobDetail, JobFilters, JobPage, Meta, TaggingStats } from "./types";
 
 const API_ORIGIN = process.env.API_ORIGIN ?? "http://localhost:8080";
 const PROXY_SECRET = process.env.PROXY_SECRET ?? "";
@@ -43,5 +43,6 @@ export function toQuery(filters: JobFilters): string {
 }
 
 export const getMeta = () => apiGet<Meta>("/api/meta");
+export const getTaggingStats = () => apiGet<TaggingStats>("/api/meta/tagging");
 export const searchJobs = (filters: JobFilters) => apiGet<JobPage>(`/api/jobs${toQuery(filters)}`);
 export const getJob = (id: string) => apiGet<JobDetail>(`/api/jobs/${encodeURIComponent(id)}`);

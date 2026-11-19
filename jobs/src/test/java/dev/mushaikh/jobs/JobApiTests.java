@@ -225,4 +225,42 @@ class JobApiTests extends ApiTestBase {
 			.andExpect(jsonPath("$.workModes").isArray())
 			.andExpect(jsonPath("$.jobTypes").isArray());
 	}
+
+	@Test
+	void taggingStatsPriceFreeTokensAtTheReferenceModel() throws Exception {
+		// seeded rows: model 'test', no tokens (counts as non-LLM). Add two free-tier LLM rows.
+		UUID a = insertJob("Intern A", "Acme", "x", "https://boards.example.com/a");
+		tag(a, "software", "Pune", "onsite", "internship", 0, true);
+		UUID b = insertJob("Intern B", "Acme", "x", "https://boards.example.com/b");
+		tag(b, "software", "Pune", "onsite", "internship", 0, true);
+		jdbc.update("update job_tags set model = 'gemini/gemini-3.5-flash-lite', input_tokens = 1000,"
+				+ " output_tokens = 100 where job_id in (?, ?)", a, b);
+		jdbc.update("insert into ingest_runs (finished_at, tagged, llm_cost_usd) values (now(), 2, 0)");
+
+		// 1000 in @ $0.10/M + 100 out @ $0.50/M = $0.00015 per job = $0.15 per 1,000
+		mvc.perform(get("/api/meta/tagging").with(freshIp()))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.jobsTagged").value(5))
+			.andExpect(jsonPath("$.llmTaggedJobs").value(2))
+			.andExpect(jsonPath("$.models[0].model").value("test"))
+			.andExpect(jsonPath("$.models[1].model").value("gemini/gemini-3.5-flash-lite"))
+			.andExpect(jsonPath("$.models[1].percent").value(40.0))
+			.andExpect(jsonPath("$.avgInputTokens").value(1000.0))
+			.andExpect(jsonPath("$.actualCostUsd").value(0.0))
+			.andExpect(jsonPath("$.actualPer1000Usd").value(0.0))
+			.andExpect(jsonPath("$.referenceModel").value("claude-haiku-5-5"))
+			.andExpect(jsonPath("$.paidPer1000Usd").value(0.15))
+			.andExpect(jsonPath("$.paidPer1000Inr").value(13.2))
+			.andExpect(jsonPath("$.lastRun").exists());
+	}
+
+	@Test
+	void taggingStatsAreEmptyBeforeAnyLlmRun() throws Exception {
+		jdbc.update("truncate job_tags");
+		mvc.perform(get("/api/meta/tagging").with(freshIp()))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.jobsTagged").value(0))
+			.andExpect(jsonPath("$.paidPer1000Usd").doesNotExist())
+			.andExpect(jsonPath("$.actualPer1000Usd").doesNotExist());
+	}
 }

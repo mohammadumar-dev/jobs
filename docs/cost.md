@@ -54,6 +54,16 @@ from memory.
 
 ## Cost per 1,000 posts
 
+The About page shows this live from `GET /api/meta/tagging`: actual spend (free
+tiers, $0) and the paid equivalent, i.e. the stored token counts of every tagged job
+priced at `app.pricing.*` in `jobs/src/main/resources/application.properties`
+(Claude Haiku 5.5 list price; keep it in step with `worker/pricing.yaml`). Rows tagged
+by the rule-based fallback have no tokens and are left out of the average.
+
+First measurement, 2026-11-19, local run: 132 jobs, all Gemini; on average 1,029
+input and 96 output tokens per job; paid equivalent $0.151 (about ₹13.29) per 1,000
+jobs.
+
 | Model | Avg input tokens | Avg output tokens | USD / 1,000 | INR / 1,000 | With Batch API |
 | ----- | ---------------- | ----------------- | ----------- | ----------- | -------------- |
 | pending | | | | | |

@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { BRAND } from "@/lib/brand";
+import { getTaggingStats } from "@/lib/api";
 import { EVAL_RESULTS as R } from "@/lib/eval-results";
+import type { TaggingStats } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Sources and method",
-  description: "Where the jobs come from, how they are tagged, and how accurate the tags are.",
+  description: "Where the jobs come from, how they are tagged, what tagging costs and how accurate it is.",
 };
 
 const SOURCES = [
@@ -26,7 +28,13 @@ function Section({ id, title, children }: { id: string; title: string; children:
   );
 }
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  let stats: TaggingStats | null = null;
+  try {
+    stats = await getTaggingStats();
+  } catch {
+    // API asleep or down: the cost section says so and the rest of the page still renders.
+  }
   return (
     <div className="mx-auto grid max-w-3xl gap-4">
       <h1 className="display mb-2 text-3xl sm:text-4xl">How {BRAND.name} works</h1>
@@ -65,12 +73,16 @@ export default function AboutPage() {
         </p>
       </Section>
 
-      <Section id="numbers" title="Accuracy and cost">
+      <Section id="cost" title="Tagging cost">
+        <CostSection stats={stats} />
+      </Section>
+
+      <Section id="accuracy" title="Accuracy">
         {R.sampleSize === null ? (
           <p>
-            Not measured yet. The accuracy check (50 jobs labelled by a person without seeing the
-            model&apos;s answers) and the cost per 1,000 jobs will be published here once they
-            have been run.
+            Not yet checked by a person. The check compares the model&apos;s tags on 50 random jobs
+            with labels from a person who has not seen the model&apos;s answers; the results will be
+            published here once it has been done.
           </p>
         ) : (
           <>
@@ -104,13 +116,108 @@ export default function AboutPage() {
                 </tr>
               </tbody>
             </table>
-            <p>
-              Tagging cost: ${R.costPer1000Usd?.toFixed(3)} (about ₹{R.costPer1000Inr?.toFixed(2)}) per
-              1,000 jobs.
-            </p>
           </>
         )}
       </Section>
     </div>
+  );
+}
+
+const PROVIDERS: Record<string, string> = {
+  gemini: "Google Gemini",
+  groq: "Groq",
+  openrouter: "OpenRouter",
+};
+
+/** "gemini/gemini-3.5-flash-lite" -> "Google Gemini (gemini-3.5-flash-lite)". */
+function modelLabel(model: string): string {
+  if (model === "heuristic-v1") return "Rules only (no AI; used when every AI is unavailable)";
+  const slash = model.indexOf("/");
+  if (slash < 0) return model;
+  const provider = model.slice(0, slash);
+  return `${PROVIDERS[provider] ?? provider} (${model.slice(slash + 1)})`;
+}
+
+/** "claude-haiku-5-5" -> "Claude Haiku 5.5". */
+function referenceLabel(model: string): string {
+  const m = /^claude-([a-z]+)-(\d+)-(\d+)$/.exec(model);
+  if (!m) return model;
+  return `Claude ${m[1][0].toUpperCase()}${m[1].slice(1)} ${m[2]}.${m[3]}`;
+}
+
+const usd = (n: number) => `$${n < 1 ? n.toFixed(3) : n.toFixed(2)}`;
+const num = (n: number | null) => (n === null ? "–" : n.toLocaleString("en-IN"));
+
+function CostSection({ stats }: { stats: TaggingStats | null }) {
+  if (!stats) {
+    return <p>The cost figures are not available right now. Try again in a minute.</p>;
+  }
+  if (stats.llmTaggedJobs === 0) {
+    return <p>No jobs have been tagged by a language model yet. Figures appear after the first daily run.</p>;
+  }
+  const ref = referenceLabel(stats.referenceModel);
+  return (
+    <>
+      <dl className="grid gap-3 sm:grid-cols-2">
+        <div className="rounded-lg border p-4">
+          <dt className="text-muted-foreground text-sm">What we spend per 1,000 jobs</dt>
+          <dd className="mt-1 text-2xl font-bold tabular-nums">{usd(stats.actualPer1000Usd ?? 0)}</dd>
+          <dd className="text-muted-foreground text-sm">We use the AI providers&apos; free tiers.</dd>
+        </div>
+        <div className="rounded-lg border p-4">
+          <dt className="text-muted-foreground text-sm">If we paid ({ref}, list price)</dt>
+          <dd className="mt-1 text-2xl font-bold tabular-nums">
+            {stats.paidPer1000Usd === null ? "–" : usd(stats.paidPer1000Usd)}
+            {stats.paidPer1000Inr !== null && (
+              <span className="text-muted-foreground text-base font-normal">
+                {" "}
+                (about ₹{stats.paidPer1000Inr.toFixed(2)})
+              </span>
+            )}
+          </dd>
+          <dd className="text-muted-foreground text-sm">per 1,000 jobs</dd>
+        </div>
+      </dl>
+      <p>
+        Worked out from the tokens actually used: on average {num(stats.avgInputTokens)} tokens in and{" "}
+        {num(stats.avgOutputTokens)} out per job, retries included, across {num(stats.llmTaggedJobs)} jobs.
+        Priced at {ref}&apos;s ${stats.referenceInputUsdPerMTok.toFixed(2)} per million input and $
+        {stats.referenceOutputUsdPerMTok.toFixed(2)} per million output tokens.
+      </p>
+      <table className="w-full text-left">
+        <caption className="mb-2 text-left font-semibold">Which model tagged the jobs</caption>
+        <thead>
+          <tr className="border-b">
+            <th scope="col" className="py-2 font-semibold">
+              Model
+            </th>
+            <th scope="col" className="py-2 text-right font-semibold">
+              Jobs
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {stats.models.map((m) => (
+            <tr key={m.model} className="border-b">
+              <td className="py-2">{modelLabel(m.model)}</td>
+              <td className="py-2 text-right tabular-nums">
+                {num(m.jobs)} ({m.percent.toFixed(0)}%)
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {stats.lastRun && (
+        <p className="text-muted-foreground text-sm">
+          Updated after every daily run. Last run:{" "}
+          {new Date(stats.lastRun).toLocaleString("en-IN", {
+            dateStyle: "medium",
+            timeStyle: "short",
+            timeZone: "Asia/Kolkata",
+          })}{" "}
+          IST.
+        </p>
+      )}
+    </>
   );
 }

@@ -47,6 +47,26 @@ export type Meta = {
   jobTypes: Facet[];
 };
 
+export type ModelShare = { model: string; jobs: number; percent: number };
+
+/** GET /api/meta/tagging. Nullable numbers are null until there is data. */
+export type TaggingStats = {
+  jobsTagged: number;
+  llmTaggedJobs: number;
+  models: ModelShare[];
+  avgInputTokens: number | null;
+  avgOutputTokens: number | null;
+  actualCostUsd: number;
+  actualPer1000Usd: number | null;
+  referenceModel: string;
+  referenceInputUsdPerMTok: number;
+  referenceOutputUsdPerMTok: number;
+  paidPer1000Usd: number | null;
+  paidPer1000Inr: number | null;
+  paidTotalUsd: number | null;
+  lastRun: string | null;
+};
+
 export type Me = { authenticated: boolean; email: string | null; name: string | null };
 
 export type UserJob = { job: JobCard; at: string };

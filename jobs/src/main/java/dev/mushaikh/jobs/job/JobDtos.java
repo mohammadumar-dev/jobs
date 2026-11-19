@@ -32,6 +32,21 @@ public final class JobDtos {
 			List<Facet> workModes, List<Facet> jobTypes) {
 	}
 
+	/** Share of tagged jobs per model ("heuristic-v1" is the rule-based fallback). */
+	public record ModelShare(String model, long jobs, double percent) {
+	}
+
+	/**
+	 * Tagging cost from stored token counts. {@code actual*} is what was spent (free
+	 * tiers are $0); {@code paid*} prices the same tokens at {@code referenceModel}.
+	 * Nullable numbers are null until there is data.
+	 */
+	public record TaggingStats(long jobsTagged, long llmTaggedJobs, List<ModelShare> models, Double avgInputTokens,
+			Double avgOutputTokens, double actualCostUsd, Double actualPer1000Usd, String referenceModel,
+			double referenceInputUsdPerMTok, double referenceOutputUsdPerMTok, Double paidPer1000Usd,
+			Double paidPer1000Inr, Double paidTotalUsd, Instant lastRun) {
+	}
+
 	/** A saved or applied job with when the user did it. */
 	public record UserJob(JobCard job, Instant at) {
 	}

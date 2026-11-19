@@ -22,6 +22,7 @@ import dev.mushaikh.jobs.job.JobDtos.JobDetail;
 import dev.mushaikh.jobs.job.JobDtos.JobPage;
 import dev.mushaikh.jobs.job.JobDtos.Meta;
 import dev.mushaikh.jobs.job.JobDtos.SearchQuery;
+import dev.mushaikh.jobs.job.JobDtos.TaggingStats;
 import dev.mushaikh.jobs.security.AppPrincipal;
 
 @RestController
@@ -34,9 +35,12 @@ public class JobController {
 	private final JobQueryService jobs;
 	private final UserJobService userJobs;
 
-	public JobController(JobQueryService jobs, UserJobService userJobs) {
+	private final TaggingStatsService tagging;
+
+	public JobController(JobQueryService jobs, UserJobService userJobs, TaggingStatsService tagging) {
 		this.jobs = jobs;
 		this.userJobs = userJobs;
+		this.tagging = tagging;
 	}
 
 	@GetMapping("/jobs")
@@ -59,6 +63,12 @@ public class JobController {
 	@GetMapping("/meta")
 	public Meta meta() {
 		return jobs.meta();
+	}
+
+	/** Live tagging cost and model mix for the About page. */
+	@GetMapping("/meta/tagging")
+	public TaggingStats taggingStats() {
+		return tagging.stats();
 	}
 
 	/**
