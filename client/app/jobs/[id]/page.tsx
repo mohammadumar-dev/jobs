@@ -55,6 +55,14 @@ export default async function JobDetailPage({ params }: PageProps<"/jobs/[id]">)
         <p className="mt-4 text-sm text-muted-foreground">
           {posted && `Posted ${posted} · `}
           Source: <span className="font-semibold text-foreground">{label(job.sourceType)}</span>
+          {job.sourceType === "adzuna" && (
+            <>
+              {" · "}
+              <a href="https://www.adzuna.in" className="underline underline-offset-4" rel="noopener">
+                Jobs by Adzuna
+              </a>
+            </>
+          )}
         </p>
         <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-start">
           <ApplyButton jobId={job.id} applyUrl={job.applyUrl} />

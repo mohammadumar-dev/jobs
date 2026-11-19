@@ -9,7 +9,7 @@
   type: adzuna
   config:
     queries: [fresher, intern, internship, graduate trainee, entry level, junior]
-    max_pages: 3
+    max_pages: 2  # 6 queries x 2 pages = at most 12 calls a run (trial key: 25 calls in total)
     max_days_old: 30
 
 # --- Greenhouse (boards-api.greenhouse.io) ---

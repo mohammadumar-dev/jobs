@@ -85,7 +85,11 @@ export function SiteFooter() {
     <footer className="mt-auto border-t px-4 py-8 text-sm text-muted-foreground">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4">
         <p>
-          {BRAND.name} links to each employer&apos;s own posting. We never apply on your behalf.
+          {BRAND.name} links to each employer&apos;s own posting. We never apply on your behalf.{" "}
+          <a href="https://www.adzuna.in" className="underline underline-offset-4" rel="noopener">
+            Jobs by Adzuna
+          </a>
+          .
         </p>
         <nav aria-label="Footer" className="flex gap-4">
           <Link href="/jobs" className="underline-offset-4 hover:underline">
