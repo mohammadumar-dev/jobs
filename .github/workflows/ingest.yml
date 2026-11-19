@@ -30,7 +30,7 @@ jobs:
       # Optional paid alternative: set vars.LLM_PROVIDER=anthropic and secrets.LLM_API_KEY.
       LLM_PROVIDER: ${{ vars.LLM_PROVIDER }}
       LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
-      LLM_MODEL: ${{ vars.LLM_MODEL || 'claude-haiku-5-5' }}
+      LLM_MODEL: ${{ vars.LLM_MODEL }}  # only used with LLM_PROVIDER=anthropic
       CONTACT_URL: ${{ vars.CONTACT_URL }}
     steps:
       - uses: actions/checkout@v4

@@ -87,7 +87,7 @@ class Settings:
             adzuna_app_key=os.environ.get("ADZUNA_APP_KEY", ""),
             llm_provider=provider,
             llm_api_key=key,
-            llm_model=os.environ.get("LLM_MODEL", "claude-haiku-5-5"),
+            llm_model=env("LLM_MODEL") or "claude-haiku-5-5",  # empty in CI means default
             llm_thinking=os.environ.get("LLM_THINKING", "adaptive"),
             llm_batch=_bool("LLM_BATCH", True),
             llm_batch_min=int(os.environ.get("LLM_BATCH_MIN", "20")),
