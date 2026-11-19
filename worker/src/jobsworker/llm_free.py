@@ -184,12 +184,14 @@ class ChatCompletionsProvider(_HttpProvider):
     """Groq and OpenRouter: Chat Completions with response_format json_schema."""
 
     def __init__(
-        self, *args: Any, name: str, url: str, extra: dict[str, Any] | None = None, **kwargs: Any
+        self, *args: Any, name: str, url: str, extra: dict[str, Any] | None = None,
+        max_tokens: int = MAX_OUTPUT_TOKENS, **kwargs: Any,
     ) -> None:
         super().__init__(*args, **kwargs)
         self.name = name
         self.url = url
         self.extra = extra or {}
+        self.max_tokens = max_tokens
 
     def complete(self, system: str, user: str, schema: dict[str, Any]) -> Completion:
         data = self._post(
@@ -205,7 +207,7 @@ class ChatCompletionsProvider(_HttpProvider):
                     "type": "json_schema",
                     "json_schema": {"name": "job_tags", "strict": True, "schema": schema},
                 },
-                "max_tokens": MAX_OUTPUT_TOKENS,
+                "max_tokens": self.max_tokens,
                 **self.extra,
             },
         )
@@ -337,6 +339,8 @@ def build_providers(settings: Settings, client: httpx.Client) -> list[_HttpProvi
             client, name="openrouter", url="https://openrouter.ai/api/v1/chat/completions",
             # route only to endpoints that honour response_format
             extra={"provider": {"require_parameters": True}},
+            # the free router may pick a reasoning model that thinks before the JSON
+            max_tokens=4096,
         )
     return [available[name] for name in settings.llm_chain if name in available]
 
