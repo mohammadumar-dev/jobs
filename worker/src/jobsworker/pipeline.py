@@ -13,7 +13,7 @@ from .filters import passes
 from .http import PoliteClient
 from .models import NormalizedJob, Source
 from .normalize import finalize
-from .tagger import Tagger, cost_usd, load_pricing, make_tagger
+from .tagger import Tagger, cost_usd, load_pricing, make_tagger, paid_equivalent_usd
 from .taxonomy import Taxonomy, load_taxonomy
 
 log = logging.getLogger(__name__)
@@ -55,12 +55,17 @@ def tag_pending(
     Returns the connection in use, which may be a new one.
     """
     upgrade = tagger.model != "heuristic-v1"
+    reused = db.reuse_duplicate_tags(conn)
+    if reused:
+        log.info("reused tags of identical postings for %d jobs (no LLM call)", reused)
     jobs = db.jobs_needing_tags(conn, limit or (settings.llm_max_jobs if upgrade else None), upgrade)
     if not jobs:
         return 0, 0.0, [], conn
     log.info("tagging %d jobs with %s", len(jobs), tagger.model)
     pricing = load_pricing(settings.pricing_path)
-    tagged, cost, errors = 0, 0.0, []
+    tagged, cost, paid, errors = 0, 0.0, 0.0, []
+    tokens_in = tokens_out = fixed = 0
+    by_model: dict[str, int] = {}
     for i in range(0, len(jobs), TAG_BATCH):
         outcome = tagger.tag_many(jobs[i : i + TAG_BATCH])
         conn = db.ensure_open(conn, settings.database_url)
@@ -79,8 +84,23 @@ def tag_pending(
                 )
         tagged += len(outcome.tagged)
         cost += cost_usd(pricing, tagger.model, outcome.tagged)
+        paid += paid_equivalent_usd(pricing, outcome.tagged)
+        tokens_in += outcome.input_tokens
+        tokens_out += outcome.output_tokens
+        for t in outcome.tagged:
+            by_model[t.model or tagger.model] = by_model.get(t.model or tagger.model, 0) + 1
+            if t.fixes:
+                fixed += 1
+                log.info("guard fixed job %s: %s", t.job_id, ", ".join(t.fixes))
         errors.extend(outcome.errors)
         log.info("tagged %d/%d", tagged, len(jobs))
+    log.info("tags by model: %s; %d corrected by guards", by_model, fixed)
+    log.info(
+        "tokens: %d in, %d out (%.0f/%.0f per job, failed attempts included); spent $%.4f; "
+        "at %s list price this would be $%.4f ($%.3f per 1,000 jobs)",
+        tokens_in, tokens_out, tokens_in / max(tagged, 1), tokens_out / max(tagged, 1), cost,
+        pricing.get("reference_model"), paid, paid / max(tagged, 1) * 1000,
+    )
     return tagged, cost, errors, conn
 
 
@@ -117,6 +137,8 @@ def run(
             # 1-4. one failing source must not stop the run
             try:
                 fetched, jobs = collect(source, http, settings, taxonomy)
+                # a slow source can take minutes; Neon may have closed the idle connection
+                conn = db.ensure_open(conn, settings.database_url)
                 result = db.upsert_jobs(conn, source.id, jobs)
             except Exception as exc:  # noqa: BLE001
                 log.error("source %s failed: %s", source.key, exc)
@@ -136,6 +158,7 @@ def run(
 
         # 7. deactivate jobs missed by two consecutive runs. A job is only counted as
         # "missed" by a run in which its source was fetched successfully.
+        conn = db.ensure_open(conn, settings.database_url)
         prev = db.previous_run(conn, run_id)
         if prev and not only:
             failed_prev = {e.get("source") for e in prev["errors_json"] if e.get("source")}

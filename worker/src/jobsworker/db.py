@@ -244,11 +244,45 @@ def save_tag(conn: psycopg.Connection, job_id: Any, tag: dict[str, Any]) -> None
                experience_max = excluded.experience_max,
                is_fresher = excluded.is_fresher, model = excluded.model,
                prompt_version = excluded.prompt_version,
-               input_tokens = excluded.input_tokens,
-               output_tokens = excluded.output_tokens, tagged_at = now()
+               -- re-tagging (e.g. a rule-based tag upgraded to an LLM tag) adds up the
+               -- tokens: every call made for the job counts towards the cost
+               input_tokens = job_tags.input_tokens + excluded.input_tokens,
+               output_tokens = job_tags.output_tokens + excluded.output_tokens,
+               tagged_at = now()
         """,
         {"job_id": job_id, **tag},
     )
+
+
+def reuse_duplicate_tags(conn: psycopg.Connection) -> int:
+    """Give an untagged canonical job the LLM tag of an identical posting.
+
+    Identical = same dedupe_key (title, company, city) and same content_hash (title,
+    company, description). This happens when the row that was canonical is
+    deactivated and its duplicate from another source takes over. Copied rows carry
+    0 tokens: no call was made for them.
+    """
+    with conn.transaction():
+        cur = conn.execute(
+            """
+            insert into job_tags (job_id, role_category, role_title_clean, city, state, work_mode,
+                                  job_type, experience_min, experience_max, is_fresher, model,
+                                  prompt_version, input_tokens, output_tokens, tagged_at)
+            select distinct on (j.id)
+                   j.id, t.role_category, t.role_title_clean, t.city, t.state, t.work_mode,
+                   t.job_type, t.experience_min, t.experience_max, t.is_fresher, t.model,
+                   t.prompt_version, 0, 0, now()
+              from jobs j
+              join jobs src on src.id <> j.id and src.dedupe_key = j.dedupe_key
+                           and src.content_hash = j.content_hash
+              join job_tags t on t.job_id = src.id and t.model <> 'heuristic-v1'
+             where j.is_active and j.canonical_job_id is null
+               and not exists (select 1 from job_tags x where x.job_id = j.id)
+             order by j.id, t.tagged_at desc
+            on conflict (job_id) do nothing
+            """
+        )
+        return cur.rowcount
 
 
 def stats(conn: psycopg.Connection) -> dict[str, Any]:

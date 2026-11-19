@@ -33,6 +33,7 @@ from .tagger import (
     Tagged,
     TagOutcome,
     TagResult,
+    apply_guards,
     build_user_message,
     output_schema,
     validate_tag,
@@ -43,6 +44,15 @@ log = logging.getLogger(__name__)
 
 MAX_WAIT_S = 60  # longest Retry-After we sit out before moving to the next provider
 MAX_SERVER_FAILURES = 3  # consecutive 5xx/connection/400 errors before a provider is dropped
+
+
+class InvalidOutput(ValueError):
+    """A provider answered twice but neither answer passed validation."""
+
+    def __init__(self, message: str, input_tokens: int, output_tokens: int) -> None:
+        super().__init__(message)
+        self.input_tokens = input_tokens
+        self.output_tokens = output_tokens
 
 
 class ProviderError(Exception):
@@ -266,10 +276,10 @@ class ChainTagger:
             tout += c.output_tokens
             try:
                 tag = _parse(c.text, c.truncated, self.taxonomy)
-                return Tagged(job["id"], tag, tin, tout, model=p.label)
+                return Tagged(job["id"], tag, tin, tout, model=p.label, fixes=apply_guards(tag, job))
             except (ValueError, ValidationError) as exc:  # JSONDecodeError is a ValueError
                 err = str(exc)[:200]
-        raise ValueError(f"invalid output after retry: {err}")
+        raise InvalidOutput(f"invalid output after retry: {err}", tin, tout)
 
     def _drop(self, p: _HttpProvider, reason: str) -> None:
         if p.label not in self.disabled:
@@ -277,14 +287,23 @@ class ChainTagger:
             self.disabled[p.label] = reason
 
     def tag_one(self, job: dict[str, Any]) -> tuple[Tagged | None, list[str]]:
+        """Tokens spent on failed attempts are added to the job's final row, so the
+        paid-equivalent cost counts every token a paid API would have billed."""
         problems: list[str] = []
+        wasted_in = wasted_out = 0
         for p in self.providers:
             if p.label in self.disabled:
                 continue
             try:
                 tagged = self._try(p, job)
                 self._failures[p.label] = 0
+                tagged.input_tokens += wasted_in
+                tagged.output_tokens += wasted_out
                 return tagged, problems
+            except InvalidOutput as exc:
+                wasted_in += exc.input_tokens
+                wasted_out += exc.output_tokens
+                problems.append(f"{p.label}: {exc}"[:200])
             except ProviderError as exc:
                 problems.append(f"{p.label}: {exc.kind}: {exc}"[:200])
                 if exc.kind in ("rate_limit", "auth"):
@@ -296,7 +315,8 @@ class ChainTagger:
             except (ValueError, ValidationError) as exc:
                 problems.append(f"{p.label}: {exc}"[:200])
         if self.fallback:
-            return Tagged(job["id"], self.fallback.tag_one(job), 0, 0, model=HeuristicTagger.model), problems
+            tag = self.fallback.tag_one(job)
+            return Tagged(job["id"], tag, wasted_in, wasted_out, model=HeuristicTagger.model), problems
         return None, problems
 
     def tag_many(self, jobs: list[dict[str, Any]]) -> TagOutcome:
@@ -316,7 +336,7 @@ class ChainTagger:
         used: dict[str, int] = {}
         for t in out.tagged:
             used[t.model] = used.get(t.model, 0) + 1
-        log.info("tags by model: %s", used)
+        log.debug("tags by model: %s", used)
         return out
 
 

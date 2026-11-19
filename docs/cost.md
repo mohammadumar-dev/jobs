@@ -78,9 +78,23 @@ Saved by the content-hash skip: pending.
 - **USD to INR** in the same file is a placeholder (88.0). Use the day's rate.
 - **Batch API** halves the price; the worker uses it automatically for 20 or more
   jobs in a run. `cost.py` reports both prices.
-- **Truncation:** descriptions are cut to about 1,500 tokens (6,000 characters).
+- **Focused description (prompt v2):** at most 4,000 characters (~1,000 tokens)
+  per job. EEO, benefits and privacy paragraphs are dropped first; if it is still
+  too long, the opening paragraph and the paragraphs that mention experience,
+  eligibility, location, work mode or job type are kept before the rest. On the
+  146 jobs of the first local run this sent 8% less text and lost no experience line
+  (plain head-truncation at 6,000 characters was used before).
 - **Hash skip:** a job is only sent to the model when it is new or its
-  title/company/description hash changed. Duplicates are never tagged.
+  title/company/description hash changed. Duplicates are never tagged, and when a
+  duplicate becomes the canonical row it reuses the identical posting's LLM tag
+  instead of a new call.
+- **Every token counts.** Tokens of failed attempts (invalid output, then the next
+  provider) are added to the job's row, and re-tagging a job adds to its tokens
+  instead of replacing them, so the paid equivalent is what a paid API would have
+  billed. Each run logs its tokens and paid equivalent at the end of tagging.
+- **Guards:** after validation, answers that contradict the title are corrected
+  ("Intern" title is an internship open to freshers; "Senior"/"Lead"/"Manager", or a
+  stated minimum of 2+ years, is not for freshers). The run log lists each fix.
 - **Output tokens include thinking.** The default model thinks briefly before
   answering (effort is set to low); those tokens are billed as output and are
   included in `job_tags.output_tokens`.

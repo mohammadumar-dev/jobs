@@ -133,9 +133,56 @@ def test_validate_rejects_bad_ranges(taxonomy):
         validate_tag({**GOOD, "work_mode": "office"}, taxonomy)
 
 
-def test_description_is_truncated(taxonomy):
+def test_description_is_shortened(taxonomy):
     text = build_user_message({**JOB, "description_text": "x" * 20000})
-    assert "[description truncated]" in text and len(text) < 6500
+    assert "[description shortened]" in text and len(text) < 4500
+
+
+def test_long_description_keeps_signals_and_drops_boilerplate():
+    from jobsworker.tagger import MAX_DESC_CHARS, focus_description
+
+    filler = [f"We build great things, part {i}. " * 12 for i in range(20)]
+    desc = "\n\n".join(
+        ["You will join the payments team as a backend engineer."]
+        + filler
+        + ["We are an equal opportunity employer and value diversity. " * 3,
+           "Requirements: 0-1 years of experience, B.Tech 2026 batch. Hybrid, Pune office."]
+    )
+    out = focus_description(desc)
+    assert len(out) <= MAX_DESC_CHARS + 40
+    assert out.startswith("You will join the payments team")
+    assert "0-1 years of experience" in out  # was cut off by head-truncation before
+    assert "equal opportunity" not in out
+
+
+def test_one_block_description_keeps_the_experience_sentence():
+    """HTML-stripped descriptions often have no paragraph breaks at all."""
+    from jobsworker.tagger import MAX_DESC_CHARS, focus_description
+
+    blob = "You will build payment APIs. " + "Our culture values ownership and speed. " * 200
+    blob += "Candidates need 0-1 years of experience and a B.Tech degree."
+    out = focus_description(blob)
+    assert len(out) <= MAX_DESC_CHARS + 40
+    assert out.startswith("You will build payment APIs.")
+    assert "0-1 years of experience" in out
+
+
+def test_guards_fix_contradictions(taxonomy):
+    from jobsworker.tagger import apply_guards
+
+    tag = validate_tag({**GOOD, "job_type": "full_time", "is_fresher": False}, taxonomy)
+    fixes = apply_guards(tag, {"title": "Data Analyst Intern"})
+    assert tag.job_type == "internship" and tag.is_fresher is True and len(fixes) == 2
+
+    tag = validate_tag({**GOOD, "job_type": "full_time", "is_fresher": True}, taxonomy)
+    assert apply_guards(tag, {"title": "Senior Backend Engineer"}) and tag.is_fresher is False
+
+    tag = validate_tag({**GOOD, "job_type": "full_time", "is_fresher": True,
+                        "experience_min": 3, "experience_max": None}, taxonomy)
+    assert apply_guards(tag, {"title": "Backend Engineer"}) and tag.is_fresher is False
+
+    tag = validate_tag({**GOOD, "job_type": "full_time", "is_fresher": True}, taxonomy)
+    assert apply_guards(tag, {"title": "Graduate Engineer"}) == []
 
 
 def test_cost_uses_batch_discount(settings):

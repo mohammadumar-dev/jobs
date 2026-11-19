@@ -154,6 +154,29 @@ def test_everything_fails_falls_back_to_rules(settings, taxonomy):
     }
 
 
+def test_tokens_of_failed_attempts_are_counted(settings, taxonomy):
+    """Gemini answers twice with junk (800+50+10 tokens each), Groq succeeds: the
+    job's row carries all three calls, as a paid API would bill them."""
+    router = Router(gemini=[gemini_reply("junk"), gemini_reply("junk")], groq=[chat_reply(GOOD)])
+    [t] = chain(settings, taxonomy, router).tag_many([JOB]).tagged
+    assert t.model.startswith("groq/")
+    assert (t.input_tokens, t.output_tokens) == (800 * 2 + 700, 60 * 2 + 40)
+
+
+def test_rule_based_fallback_keeps_wasted_tokens(settings, taxonomy):
+    router = Router(openrouter=[chat_reply("{}"), chat_reply("{}")])
+    out = chain(settings, taxonomy, router, gemini_api_key="", groq_api_key="").tag_many([JOB])
+    [t] = out.tagged
+    assert t.model == "heuristic-v1" and (t.input_tokens, t.output_tokens) == (1400, 80)
+
+
+def test_guards_apply_to_llm_answers(settings, taxonomy):
+    wrong = {**GOOD, "job_type": "full_time", "is_fresher": False}
+    router = Router(gemini=[gemini_reply(wrong)])
+    [t] = chain(settings, taxonomy, router).tag_many([JOB]).tagged  # title "... Intern"
+    assert t.tag.job_type == "internship" and t.tag.is_fresher is True and t.fixes
+
+
 def test_truncated_output_is_not_parsed(settings, taxonomy):
     router = Router(
         gemini=[gemini_reply(GOOD, finish="MAX_TOKENS"), gemini_reply(GOOD, finish="MAX_TOKENS")],

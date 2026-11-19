@@ -168,3 +168,58 @@ def test_tags_survive_a_dropped_connection(world, settings, taxonomy, pg_uri, mo
     row = side.execute("select finished_at, tagged from ingest_runs").fetchone()
     assert row["finished_at"] is not None and row["tagged"] == 3
     side.close()
+
+
+def test_retagging_adds_up_tokens(conn, world):
+    conn, run, _ = world
+    run()
+    job_id = conn.execute("select job_id from job_tags limit 1").fetchone()["job_id"]
+    tag = {"role_category": "software", "role_title_clean": "X", "city": "Pune", "state": None,
+           "work_mode": "onsite", "job_type": "internship", "experience_min": 0,
+           "experience_max": 0, "is_fresher": True, "prompt_version": "v2"}
+    db.save_tag(conn, job_id, {**tag, "model": "gemini/a", "input_tokens": 100, "output_tokens": 10})
+    db.save_tag(conn, job_id, {**tag, "model": "groq/b", "input_tokens": 50, "output_tokens": 5})
+    row = conn.execute("select model, input_tokens, output_tokens from job_tags where job_id = %s",
+                       (job_id,)).fetchone()
+    assert (row["model"], row["input_tokens"], row["output_tokens"]) == ("groq/b", 150, 15)
+
+
+def test_identical_posting_reuses_llm_tag(world, settings, taxonomy):
+    """When the canonical row disappears, its duplicate from another source takes over
+    and gets the existing LLM tag instead of a new LLM call."""
+    conn, _, _ = world
+    BOARDS["a"] = [{"id": "1", "title": "Software Engineer Intern"}]
+    BOARDS["b"] = [{"id": "x", "title": "Software Engineer Intern"}]  # identical posting
+    llm = FakeLlmTagger(taxonomy)
+    pipeline.run(settings, conn, http=object(), tagger=llm)
+    canonical = conn.execute("select id from jobs where canonical_job_id is null").fetchone()["id"]
+    dup = conn.execute("select id from jobs where canonical_job_id is not null").fetchone()["id"]
+    conn.execute("update jobs set is_active = false where id = %s", (canonical,))
+    db.recompute_duplicates(conn)
+
+    class NoCalls(FakeLlmTagger):
+        def tag_many(self, jobs):
+            raise AssertionError(f"LLM called for {len(jobs)} jobs")
+
+    tagged, *_ = pipeline.tag_pending(conn, NoCalls(taxonomy), settings)
+    assert tagged == 0
+    row = conn.execute("select model, input_tokens from job_tags where job_id = %s", (dup,)).fetchone()
+    assert row["model"] == "gemini/test-model" and row["input_tokens"] == 0
+
+
+def test_connection_dropped_during_a_slow_source(world, settings, pg_uri, monkeypatch):
+    from dataclasses import replace
+
+    conn, _, tagger = world
+    s = replace(settings, database_url=pg_uri)
+    real_collect = pipeline.collect
+
+    def slow_collect(source, *a):
+        if source.key == "a":
+            conn.close()  # the server cut the idle connection while we fetched
+        return real_collect(source, *a)
+
+    monkeypatch.setattr(pipeline, "collect", slow_collect)
+    result = pipeline.run(s, conn, http=object(), tagger=tagger)
+    assert result["errors"] == []
+    assert result["new"] == 3 and result["tagged"] == 3
