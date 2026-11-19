@@ -114,10 +114,12 @@ here. This was not done as part of the build:
 
 ## Deployment
 
+Step-by-step guide: [deploy.md](deploy.md). Render settings: `render.yaml`.
+
 | Part | Where | Notes |
 | ---- | ----- | ----- |
 | Database | Neon Postgres (TLS required) | already migrated by the API's Flyway run |
-| API | Render / Railway / Fly, from `jobs/Dockerfile` | free tiers sleep: use an always-on plan or a keep-alive ping on `/actuator/health`, and say so in the video |
+| API | Render (`render.yaml`), from `jobs/Dockerfile` | free tiers sleep: use an always-on plan or a keep-alive ping on `/actuator/health`, and say so in the video |
 | Web | Vercel, root directory `client` | env: `API_ORIGIN`, `PROXY_SECRET` |
 | Worker | GitHub Actions, `.github/workflows/ingest.yml` | secrets: `DATABASE_URL`, `ADZUNA_APP_ID`, `ADZUNA_APP_KEY`, `GEMINI_API_KEY`, `GROQ_API_KEY`, `OPENROUTER_API_KEY` (any subset; `LLM_API_KEY` only for the paid Claude option) |
 

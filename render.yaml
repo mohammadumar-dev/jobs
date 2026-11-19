@@ -1,0 +1,30 @@
+# Render Blueprint for the Spring Boot API (docs/deploy.md, step 2).
+# Secrets are `sync: false`: Render asks for them when the Blueprint is created
+# and never reads them from this file.
+services:
+  - type: web
+    name: firstrung-api
+    runtime: docker
+    plan: free
+    # Neon runs in AWS us-east-2 (Ohio); keep the API next to the database.
+    region: ohio
+    dockerfilePath: ./jobs/Dockerfile
+    dockerContext: ./jobs
+    healthCheckPath: /actuator/health
+    autoDeploy: true
+    buildFilter:
+      paths: ["jobs/**"]
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: APP_PUBLIC_ORIGIN
+        sync: false
+      - key: PROXY_SECRET
+        sync: false
+      # 512 MB free instance: smaller heap share, serial GC, faster start-up.
+      - key: JAVA_TOOL_OPTIONS
+        value: "-XX:MaxRAMPercentage=60 -XX:+UseSerialGC -XX:TieredStopAtLevel=1 -Xss512k -Duser.timezone=UTC"

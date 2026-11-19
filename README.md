@@ -76,7 +76,7 @@ Worker and API tests start their own embedded Postgres; no setup needed.
   with `LLM_API_KEY` switches to paid Claude tagging instead.
 - **Google OAuth client** for "Continue with Google".
 - Hosting accounts for the API and the web app, and the GitHub Actions secrets for
-  the daily run. See "Deployment" in [docs/architecture.md](docs/architecture.md).
+  the daily run. Step by step: [docs/deploy.md](docs/deploy.md).
 - The 50 human labels for the accuracy check. See [docs/cost.md](docs/cost.md).
 
 ## Adding a source
