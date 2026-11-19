@@ -8,12 +8,13 @@ services:
     plan: free
     # Neon runs in AWS us-east-2 (Ohio); keep the API next to the database.
     region: ohio
-    dockerfilePath: ./jobs/Dockerfile
-    dockerContext: ./jobs
+    # The API lives in jobs/; with rootDir set, the paths below are relative to it,
+    # and only changes under jobs/ trigger a deploy.
+    rootDir: jobs
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
     healthCheckPath: /actuator/health
     autoDeploy: true
-    buildFilter:
-      paths: ["jobs/**"]
     envVars:
       - key: SPRING_DATASOURCE_URL
         sync: false

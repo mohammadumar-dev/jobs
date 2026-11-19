@@ -49,6 +49,11 @@ Generate the secret once and keep it in a password manager:
 1. render.com, sign in with GitHub, **New, Blueprint**, pick this repository.
    Render reads `render.yaml` (Docker, region Ohio next to Neon, free plan,
    health check `/actuator/health`).
+   If you create a plain **Web Service** instead, set Root Directory `jobs`,
+   Dockerfile Path `./Dockerfile`, Docker Build Context `.`, Health Check Path
+   `/actuator/health`, and add the variables below plus `JAVA_TOOL_OPTIONS` from
+   `render.yaml`. Without Root Directory the build fails with
+   `open Dockerfile: no such file or directory`.
 2. Fill the secret values it asks for:
    - `SPRING_DATASOURCE_URL` = `jdbc:postgresql://<neon-host>/neondb?sslmode=require&channel_binding=require`
      (the host from your Neon URL; JDBC form, no user/password in it)
