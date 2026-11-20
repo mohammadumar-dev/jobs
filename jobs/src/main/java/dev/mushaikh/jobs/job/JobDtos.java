@@ -56,4 +56,17 @@ public final class JobDtos {
 
 	public record SearchQuery(String q, String role, String city, String mode, String type, Integer exp, int page) {
 	}
+
+	/** One ingest run. {@code finishedAt} and {@code durationSeconds} are null while it runs or if it crashed. */
+	public record RunSummary(Instant startedAt, Instant finishedAt, Long durationSeconds, int fetched, int newJobs,
+			int updated, int deactivated, int tagged, int errors, double costUsd) {
+	}
+
+	/** Listed jobs per source type. */
+	public record SourceShare(String type, long jobs, double percent) {
+	}
+
+	/** Recent runs (newest first) and the source mix, for the docs page. */
+	public record RunHistory(List<RunSummary> runs, List<SourceShare> sources) {
+	}
 }

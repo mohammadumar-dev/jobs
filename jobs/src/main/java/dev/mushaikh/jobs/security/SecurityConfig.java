@@ -92,7 +92,7 @@ public class SecurityConfig {
 
 		http.authorizeHttpRequests(auth -> auth
 			.requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
-			.requestMatchers(HttpMethod.GET, "/api/jobs", "/api/jobs/*", "/api/meta", "/api/meta/tagging", "/api/me", "/api/csrf").permitAll()
+			.requestMatchers(HttpMethod.GET, "/api/jobs", "/api/jobs/*", "/api/meta", "/api/meta/tagging", "/api/meta/runs", "/api/me", "/api/csrf").permitAll()
 			.requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login", "/api/auth/logout").permitAll()
 			.requestMatchers(HttpMethod.POST, "/api/jobs/*/apply").permitAll()
 			.requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()

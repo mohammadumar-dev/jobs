@@ -49,11 +49,15 @@ public abstract class ApiTestBase {
 	@Autowired
 	protected dev.mushaikh.jobs.job.TaggingStatsService taggingStats;
 
+	@Autowired
+	protected dev.mushaikh.jobs.job.RunHistoryService runHistory;
+
 	@BeforeEach
 	void cleanDatabase() {
 		loginAttempts.clearAll();
 		jobQueries.clearMetaCache();
 		taggingStats.clearCache();
+		runHistory.clearCache();
 		jdbc.execute("truncate job_tags, apply_clicks, saved_jobs, jobs, sources, ingest_runs, users,"
 				+ " spring_session_attributes, spring_session restart identity cascade");
 	}

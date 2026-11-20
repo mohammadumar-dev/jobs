@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -262,5 +263,29 @@ class JobApiTests extends ApiTestBase {
 			.andExpect(jsonPath("$.jobsTagged").value(0))
 			.andExpect(jsonPath("$.paidPer1000Usd").doesNotExist())
 			.andExpect(jsonPath("$.actualPer1000Usd").doesNotExist());
+	}
+
+	@Test
+	void runHistoryShowsRecentRunsNewestFirstWithErrorCountsOnly() throws Exception {
+		insertJob("Intern A", "Acme", "x", "https://boards.example.com/a");
+		jdbc.update("""
+				insert into ingest_runs (started_at, finished_at, fetched, new, tagged, errors_json)
+				values (now() - interval '2 days', now() - interval '2 days' + interval '90 seconds', 100, 10, 8,
+				        '[{"source": "lever:x", "error": "secret detail"}]'::jsonb)
+				""");
+		jdbc.update("insert into ingest_runs (started_at, fetched) values (now(), 50)"); // still running
+
+		mvc.perform(get("/api/meta/runs").with(freshIp()))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.runs.length()").value(2))
+			.andExpect(jsonPath("$.runs[0].fetched").value(50))
+			.andExpect(jsonPath("$.runs[0].finishedAt").doesNotExist())
+			.andExpect(jsonPath("$.runs[1].durationSeconds").value(90))
+			.andExpect(jsonPath("$.runs[1].newJobs").value(10))
+			.andExpect(jsonPath("$.runs[1].tagged").value(8))
+			.andExpect(jsonPath("$.runs[1].errors").value(1))
+			.andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("secret detail"))))
+			.andExpect(jsonPath("$.sources[0].type").value("greenhouse"))
+			.andExpect(jsonPath("$.sources[0].percent").value(100.0));
 	}
 }

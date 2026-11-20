@@ -21,6 +21,7 @@ import dev.mushaikh.jobs.job.JobDtos.ApplyResponse;
 import dev.mushaikh.jobs.job.JobDtos.JobDetail;
 import dev.mushaikh.jobs.job.JobDtos.JobPage;
 import dev.mushaikh.jobs.job.JobDtos.Meta;
+import dev.mushaikh.jobs.job.JobDtos.RunHistory;
 import dev.mushaikh.jobs.job.JobDtos.SearchQuery;
 import dev.mushaikh.jobs.job.JobDtos.TaggingStats;
 import dev.mushaikh.jobs.security.AppPrincipal;
@@ -37,10 +38,14 @@ public class JobController {
 
 	private final TaggingStatsService tagging;
 
-	public JobController(JobQueryService jobs, UserJobService userJobs, TaggingStatsService tagging) {
+	private final RunHistoryService runs;
+
+	public JobController(JobQueryService jobs, UserJobService userJobs, TaggingStatsService tagging,
+			RunHistoryService runs) {
 		this.jobs = jobs;
 		this.userJobs = userJobs;
 		this.tagging = tagging;
+		this.runs = runs;
 	}
 
 	@GetMapping("/jobs")
@@ -69,6 +74,12 @@ public class JobController {
 	@GetMapping("/meta/tagging")
 	public TaggingStats taggingStats() {
 		return tagging.stats();
+	}
+
+	/** Last ten ingest runs and the source mix, for the docs page. Counts only, no error text. */
+	@GetMapping("/meta/runs")
+	public RunHistory runHistory() {
+		return runs.history();
 	}
 
 	/**
