@@ -186,6 +186,7 @@ export function SiteFooter() {
             ["/jobs", "Browse jobs"],
             ["/about", "Sources and method"],
             ["/docs", "Project docs"],
+            ["/loom", "Video walkthrough"],
           ].map(([href, text]) => (
             <Link
               key={href}
