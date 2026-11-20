@@ -72,6 +72,10 @@ function findings(stats: TaggingStats | null, history: RunHistory | null): [stri
       "A guard that forced every \"Trainee\" title to internship wrongly changed 22 \"Graduate Engineer Trainee\" jobs, which are full-time in India. The AI had them right. Now only intern/apprentice titles are forced.",
     ],
     [
+      "Job search APIs give previews, not full descriptions.",
+      "Adzuna's API sends only the first 500 characters of each job, so those pages show a short preview and a link to the full posting. Company boards (Greenhouse, Lever, Ashby, SmartRecruiters) send the full text, often 2,000 to 10,000 characters. The AI also sees only the preview for Adzuna jobs, so an experience line further down can be missed.",
+    ],
+    [
       "Long-running jobs need short database connections.",
       "The first real run tagged 132 jobs in 38 minutes and then lost all of them: Neon had closed the idle connection. Saving every 10 jobs and reconnecting fixed it.",
     ],
@@ -486,6 +490,7 @@ export default async function DocsPage() {
         <Bullets
           items={[
             "Adzuna's free trial key allows 25 calls in total, so it will soon stop. Next: add Jooble or Careerjet, which have free partner keys.",
+            "Adzuna jobs have only a 500-character description preview. We do not scrape the full text: we only use official APIs, and Adzuna's terms say to link out. More company boards would mean more jobs with full descriptions.",
             "Free AI tiers have daily limits. A big backlog takes a few nights; normal days need only a handful of calls.",
             "The API sleeps on Render's free plan; a health check every 5 minutes keeps it awake.",
             "Login lockout is kept in memory, so it resets if the API restarts.",

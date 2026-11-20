@@ -18,6 +18,7 @@ export function TagChips({ job }: { job: Job }) {
 
 export function JobCard({ job, now, note }: { job: Job; now: number; note?: string }) {
   const posted = timeAgo(job.postedAt ?? job.firstSeenAt, now);
+  const when = note ?? (posted ? `Posted ${posted}` : "");
   const place = job.tags && job.tags.city !== "Other" ? job.tags.city : job.location;
   return (
     <article className="card relative flex h-full flex-col gap-3 p-4 transition-shadow hover:shadow-hover">
@@ -31,9 +32,17 @@ export function JobCard({ job, now, note }: { job: Job; now: number; note?: stri
         <p className="mt-1 text-sm text-muted-foreground">{place || "India"}</p>
       </div>
       <TagChips job={job} />
-      <p className="mt-auto text-sm text-muted-foreground">
-        {!job.active && <span className="font-semibold text-destructive">No longer listed. </span>}
-        {note ?? (posted ? `Posted ${posted}` : "")}
+      <p className="mt-auto flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+        {!job.active && <span className="font-semibold text-destructive">No longer listed.</span>}
+        {when && (
+          <>
+            <span>{when}</span>
+            <span aria-hidden="true">·</span>
+          </>
+        )}
+        <span>
+          via <span className="font-semibold text-foreground">{label(job.sourceType)}</span>
+        </span>
       </p>
     </article>
   );

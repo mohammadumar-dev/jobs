@@ -81,6 +81,22 @@ export default async function JobDetailPage({ params }: PageProps<"/jobs/[id]">)
         <div className="mt-3 whitespace-pre-line break-words leading-7">
           {job.description || "The employer did not provide a description. See the original posting."}
         </div>
+        {/* Adzuna's API returns only a ~500-character preview; the full text is behind its link. */}
+        {job.sourceType === "adzuna" && job.description && job.applyUrl && (
+          <p className="mt-4 rounded-md bg-muted px-4 py-3 text-sm leading-6">
+            Adzuna shares only a short preview of this job.{" "}
+            <a
+              href={job.applyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-brand underline underline-offset-4"
+            >
+              Read the full description on the original posting
+              <span aria-hidden="true"> ↗</span>
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          </p>
+        )}
       </section>
     </article>
   );
