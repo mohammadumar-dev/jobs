@@ -5,21 +5,25 @@ import { LOOM_NOTE_DATE, LOOM_SHARE_URL, loomEmbedUrl } from "@/lib/loom";
 
 export const metadata: Metadata = {
   title: "Video walkthrough",
-  description: `A 5-minute video tour of ${BRAND.name}: the site, how jobs are collected and tagged, and what it costs.`,
+  description: `A 6-minute video tour of ${BRAND.name}: the site, how jobs are collected and tagged, and what it costs.`,
 };
 
 /** What the video covers, in order. Each line links to the page shown at that point. */
 const CHAPTERS: [string, string, string, string][] = [
-  ["0:00", "Hello", "What the project is and who it is for.", "/"],
-  ["0:20", "Home page", "Live job and company counts from the API.", "/"],
-  ["0:40", "Search and filters", "Role, city, work mode, job type and experience. Filters live in the link.", "/jobs"],
-  ["1:30", "A job page", "AI tags, the source, and Apply going to the employer's own page.", "/jobs"],
-  ["2:05", "Saved and applied jobs", "Log in, save a job, see it on the dashboard.", "/dashboard"],
-  ["2:35", "On a phone", "Filters fold behind one button.", "/jobs"],
-  ["2:50", "How it is built", "Architecture, the nightly run, the AI fallback chain and the prompt.", "/docs#architecture"],
-  ["3:40", "Cost and real runs", "Tokens counted on every call, and the live run history.", "/docs#cost"],
-  ["4:15", "What I found", "Three findings, with proof.", "/docs#findings"],
-  ["4:45", "Next steps", "More job APIs and the accuracy check.", "/docs#next"],
+  ["0:00", "Hello and home page", "What the project is, and live job and company counts.", "/"],
+  ["0:37", "Search and filters", "Role, city, work mode, job type and experience. Filters live in the link.", "/jobs"],
+  ["0:55", "Every job shows its source", "Adzuna, Greenhouse, Lever, SmartRecruiters, with the full description.", "/jobs"],
+  ["1:10", "Apply opens the employer's page", "A Stripe job, opened on Stripe's own careers page.", "/jobs"],
+  ["1:28", "Saved and applied jobs", "The dashboard, and how 'applied' is counted.", "/dashboard"],
+  ["1:48", "What I found", "Company boards have very few fresher jobs in India.", "/docs#findings"],
+  ["2:08", "Architecture", "Worker, database, API and website, and the path of one request.", "/docs#architecture"],
+  ["2:38", "The nightly run", "Fetch, filter, de-duplicate, skip unchanged, tag.", "/docs#pipeline"],
+  ["3:16", "AI tagging", "Gemini, then Groq, then OpenRouter, then rules.", "/docs#tagging"],
+  ["4:03", "The prompt", "The system prompt and a real answer.", "/docs#prompts"],
+  ["4:15", "System design", "Why there is no Redis or extra caching yet.", "/docs#system"],
+  ["4:52", "Cost", "Tokens counted on every call.", "/docs#cost"],
+  ["5:07", "Run history", "Real nightly runs, read live from the database.", "/docs#runs"],
+  ["5:31", "Limits and next steps", "Official APIs only, so no LinkedIn or Naukri.", "/docs#next"],
 ];
 
 /** Everything the video shows is already on the site, so point visitors to it. */
@@ -37,7 +41,7 @@ export default function LoomPage() {
     <div className="mx-auto grid max-w-3xl gap-8">
       <header className="pt-2">
         <p className="text-sm font-semibold tracking-wide text-brand uppercase">Video walkthrough</p>
-        <h1 className="display mt-2 text-3xl sm:text-4xl">{BRAND.name} in 5 minutes</h1>
+        <h1 className="display mt-2 text-3xl sm:text-4xl">{BRAND.name} in 6 minutes</h1>
         <p className="mt-3 text-lg text-muted-foreground">
           A short screen recording of the site and how it works behind the scenes.
         </p>

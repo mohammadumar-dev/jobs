@@ -13,3 +13,7 @@ target/
 .next/
 test-results/
 playwright-report/
+
+# Screen recordings (large; hosted on Loom)
+*.mp4
+*.mov

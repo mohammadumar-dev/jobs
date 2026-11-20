@@ -3,7 +3,7 @@
  * e.g. "https://www.loom.com/share/0123456789abcdef0123456789abcdef".
  * While it is null, /loom shows a "coming soon" note instead.
  */
-export const LOOM_SHARE_URL: string | null = null;
+export const LOOM_SHARE_URL: string | null = "https://www.loom.com/share/dd1c8efd86c84743b4c5afa4e461c561";
 
 /** Date the note on /loom was written (shown to visitors). */
 export const LOOM_NOTE_DATE = "21 Nov 2026";
