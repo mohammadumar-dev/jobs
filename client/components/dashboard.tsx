@@ -45,7 +45,7 @@ export function Dashboard() {
   return (
     <>
       <h1 className="display text-3xl">Hi {me.name?.split(" ")[0] ?? "there"}</h1>
-      <p className="mt-2 text-muted-foreground">Signed in as {me.email}</p>
+      <p className="mt-2 break-all text-muted-foreground">Signed in as {me.email}</p>
 
       <div role="tablist" aria-label="Your jobs" className="mt-6 flex gap-2 border-b">
         {TABS.map((t) => (

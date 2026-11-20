@@ -6,9 +6,9 @@ import type { JobPage, Meta } from "@/lib/types";
 
 function StatTile({ value, text }: { value: string; text: string }) {
   return (
-    <div className="card rounded-tile p-6 text-center">
-      <p className="display text-3xl text-brand sm:text-4xl">{value}</p>
-      <p className="mt-2 text-sm font-semibold text-muted-foreground">{text}</p>
+    <div className="card rounded-tile p-4 text-center last:col-span-2 sm:p-6 sm:last:col-span-1">
+      <p className="display text-[28px] text-brand sm:text-4xl">{value}</p>
+      <p className="mt-1 text-sm font-semibold text-muted-foreground sm:mt-2">{text}</p>
     </div>
   );
 }
@@ -47,7 +47,7 @@ export default async function HomePage() {
       </section>
 
       {meta ? (
-        <section aria-label="At a glance" className="grid gap-4 sm:grid-cols-3">
+        <section aria-label="At a glance" className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
           <StatTile value={meta.activeJobs.toLocaleString("en-IN")} text="active fresher jobs" />
           <StatTile value={meta.companies.toLocaleString("en-IN")} text="companies hiring" />
           <StatTile value={meta.lastRefresh ? "Daily" : "Soon"} text={`last refresh: ${formatDate(meta.lastRefresh)}`} />
@@ -85,7 +85,10 @@ export default async function HomePage() {
             <h2 id="latest" className="display text-2xl">
               Fresh today
             </h2>
-            <Link href="/jobs" className="font-semibold text-brand underline-offset-4 hover:underline">
+            <Link
+              href="/jobs"
+              className="inline-flex min-h-11 items-center font-semibold whitespace-nowrap text-brand underline-offset-4 hover:underline"
+            >
               See all jobs
             </Link>
           </div>

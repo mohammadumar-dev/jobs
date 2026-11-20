@@ -20,10 +20,10 @@ export function JobCard({ job, now, note }: { job: Job; now: number; note?: stri
   const posted = timeAgo(job.postedAt ?? job.firstSeenAt, now);
   const place = job.tags && job.tags.city !== "Other" ? job.tags.city : job.location;
   return (
-    <article className="card flex h-full flex-col gap-3 p-4 transition-shadow hover:shadow-hover">
+    <article className="card relative flex h-full flex-col gap-3 p-4 transition-shadow hover:shadow-hover">
       <div>
         <h3 className="text-base font-bold leading-snug">
-          <Link href={`/jobs/${job.id}`} className="rounded-sm text-brand underline-offset-4 hover:underline">
+          <Link href={`/jobs/${job.id}`} className="rounded-sm text-brand underline-offset-4 after:absolute after:inset-0 after:rounded-[8px] after:content-[''] hover:underline">
             {job.title}
           </Link>
         </h3>

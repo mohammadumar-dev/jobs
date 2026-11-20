@@ -36,11 +36,14 @@ export default async function JobDetailPage({ params }: PageProps<"/jobs/[id]">)
 
   return (
     <article className="mx-auto max-w-3xl">
-      <Link href="/jobs" className="text-sm font-semibold text-brand underline-offset-4 hover:underline">
+      <Link
+        href="/jobs"
+        className="-ml-1 inline-flex min-h-11 items-center px-1 text-sm font-semibold text-brand underline-offset-4 hover:underline"
+      >
         ← All jobs
       </Link>
 
-      <header className="card mt-4 p-6">
+      <header className="card mt-2 p-5 sm:mt-4 sm:p-6">
         {!job.active && (
           <p role="status" className="mb-4 rounded-md bg-[#fdeceb] px-3 py-2 text-sm font-semibold text-destructive">
             This job is no longer listed by the employer. The apply link may not work.
@@ -70,7 +73,7 @@ export default async function JobDetailPage({ params }: PageProps<"/jobs/[id]">)
         </div>
       </header>
 
-      <section aria-labelledby="description" className="card mt-4 p-6">
+      <section aria-labelledby="description" className="card mt-4 p-5 sm:p-6">
         <h2 id="description" className="text-lg font-bold">
           About the role
         </h2>

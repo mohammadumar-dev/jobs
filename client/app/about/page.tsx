@@ -19,7 +19,7 @@ const SOURCES = [
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
-    <section aria-labelledby={id} className="card p-6">
+    <section aria-labelledby={id} className="card p-5 sm:p-6">
       <h2 id={id} className="text-xl font-bold">
         {title}
       </h2>
@@ -200,7 +200,7 @@ function CostSection({ stats }: { stats: TaggingStats | null }) {
           {stats.models.map((m) => (
             <tr key={m.model} className="border-b">
               <td className="py-2">{modelLabel(m.model)}</td>
-              <td className="py-2 text-right tabular-nums">
+              <td className="py-2 pl-3 text-right whitespace-nowrap tabular-nums">
                 {num(m.jobs)} ({m.percent.toFixed(0)}%)
               </td>
             </tr>
