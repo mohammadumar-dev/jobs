@@ -80,3 +80,21 @@ export type JobFilters = {
   exp?: string;
   page?: string;
 };
+
+export type RunSummary = {
+  startedAt: string;
+  /** null while the run is going, or if it crashed before recording its end. */
+  finishedAt: string | null;
+  durationSeconds: number | null;
+  fetched: number;
+  newJobs: number;
+  updated: number;
+  deactivated: number;
+  tagged: number;
+  errors: number;
+  costUsd: number;
+};
+
+export type SourceShare = { type: string; jobs: number; percent: number };
+
+export type RunHistory = { runs: RunSummary[]; sources: SourceShare[] };

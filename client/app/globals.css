@@ -127,3 +127,113 @@
     line-height: 1.05;
   }
 }
+
+/* Docs page diagrams. Kept here because the CSP blocks inline <style> elements. */
+@layer components {
+  .diagram {
+    width: 100%;
+    height: auto;
+    font-family: var(--font-sans);
+  }
+  .diagram text {
+    fill: var(--foreground);
+  }
+  .diagram .muted {
+    fill: var(--muted-foreground);
+  }
+  .flow-line {
+    fill: none;
+    stroke: var(--brand);
+    stroke-width: 2;
+    stroke-dasharray: 6 6;
+    animation: flow-dash 1.2s linear infinite;
+  }
+  .flow-line.slow {
+    animation-duration: 2.4s;
+  }
+  .flow-line.warn {
+    stroke: #b54708;
+  }
+  .flow-dot {
+    fill: var(--brand);
+  }
+  .flow-dot.warn {
+    fill: #b54708;
+  }
+  .step-strip > li {
+    animation: step-glow 8s ease-in-out infinite;
+  }
+  .menu-drop:not([hidden]) {
+    animation: viewer-fade 160ms ease-out;
+  }
+  .viewer-fade {
+    animation: viewer-fade 220ms ease-out;
+  }
+  .grow-bar {
+    transform-origin: left;
+    animation: grow-bar 1.2s ease-out both;
+  }
+  .pulse-ring {
+    animation: pulse-ring 2s ease-out infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+}
+
+@keyframes flow-dash {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+@keyframes step-glow {
+  0%,
+  14%,
+  100% {
+    border-color: var(--border);
+    background: var(--card);
+  }
+  4%,
+  10% {
+    border-color: var(--brand);
+    background: var(--brand-soft);
+  }
+}
+
+@keyframes viewer-fade {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+@keyframes grow-bar {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes pulse-ring {
+  from {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-line,
+  .step-strip > li,
+  .grow-bar,
+  .viewer-fade,
+  .menu-drop,
+  .pulse-ring {
+    animation: none;
+  }
+  .flow-dot {
+    display: none;
+  }
+}
