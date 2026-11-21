@@ -17,3 +17,6 @@ playwright-report/
 # Screen recordings (large; hosted on Loom)
 *.mp4
 *.mov
+
+# Next.js agent notes (written by next dev; kept local)
+client/AGENTS.md
