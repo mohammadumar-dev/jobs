@@ -109,8 +109,16 @@ export default async function AboutPage() {
                     <td className="py-2 text-right tabular-nums">{row.percent.toFixed(0)}%</td>
                   </tr>
                 ))}
+                {R.tagsCorrectPercent !== null && (
+                  <tr className="border-b">
+                    <td className="py-2 font-semibold">All tags (average)</td>
+                    <td className="py-2 text-right font-semibold tabular-nums">
+                      {R.tagsCorrectPercent.toFixed(0)}%
+                    </td>
+                  </tr>
+                )}
                 <tr>
-                  <td className="py-2 font-semibold">All fields correct</td>
+                  <td className="py-2 font-semibold">Jobs with every field correct</td>
                   <td className="py-2 text-right font-semibold tabular-nums">
                     {R.allFieldsCorrectPercent?.toFixed(0)}%
                   </td>
@@ -119,11 +127,8 @@ export default async function AboutPage() {
             </table>
             {R.strictAllFieldsCorrectPercent !== null && (
               <p className="text-[15px] text-muted-foreground">
-                Before the review, the model matched the hand labels exactly on all fields for{" "}
-                {R.strictAllFieldsCorrectPercent.toFixed(0)}% of jobs. Most of the real mistakes were
-                &quot;Graduate Trainee&quot; jobs tagged as internships and jobs asking for one year of
-                experience marked as not for freshers. Prompt v3 and two code checks now fix both; new
-                jobs are tagged with it from the next nightly run.
+                Before the review, the model matched the hand labels exactly on every field for{" "}
+                {R.strictAllFieldsCorrectPercent.toFixed(0)}% of jobs. {R.history}
               </p>
             )}
           </>

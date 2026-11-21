@@ -63,8 +63,26 @@ answers; every verdict and its reason is in `eval/out/adjudication.csv`.
 
 15 tags in 13 jobs were clearly wrong. The two biggest groups are fixed in prompt v3:
 "Graduate Trainee" jobs tagged as internships (6) and jobs asking for 0-1 years
-marked as not for freshers (3), both now also enforced in `apply_guards`. v3 only
-applies to newly tagged jobs, so re-measure on a fresh sample once enough exist.
+marked as not for freshers (3), both now also enforced in `apply_guards`.
+
+### Prompt v3, same 50 jobs (2026-11-21)
+
+Re-tagged with `eval/retag.py` (no database writes; all 50 went to Gemini 3.5
+Flash-Lite) and reviewed the same way (`eval/out/adjudication_v3.csv`):
+
+| Field              | Exact match | Fits the rules |
+| ------------------ | ----------- | -------------- |
+| role_category      | 60%         | 94%            |
+| city               | 94%         | 98%            |
+| work_mode          | 94%         | 96%            |
+| job_type           | 100%        | 100%           |
+| is_fresher         | 100%        | 100%           |
+| **all five right** | 52%         | **88%**        |
+| all tags (average) |             | 97.6%          |
+
+These are the jobs the v3 fixes were based on, so this is an optimistic number;
+check a fresh sample of v3-tagged jobs before relying on it. Exact match on role
+fell because v3 says `operations` for hotel jobs where the labeller chose `other`.
 
 ## Cost per 1,000 posts
 
