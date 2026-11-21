@@ -87,9 +87,10 @@ export default async function AboutPage() {
         ) : (
           <>
             <p>
-              Checked on {R.measuredOn} against {R.sampleSize} jobs labelled by a person who did
-              not see the model&apos;s answers. Model: {R.model}.
+              Checked on {R.measuredOn} against {R.sampleSize} random jobs labelled by a person who
+              did not see the model&apos;s answers. Model: {R.model}, prompt {R.promptVersion}.
             </p>
+            {R.method && <p className="text-[15px] text-muted-foreground">{R.method}</p>}
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b">
@@ -116,6 +117,15 @@ export default async function AboutPage() {
                 </tr>
               </tbody>
             </table>
+            {R.strictAllFieldsCorrectPercent !== null && (
+              <p className="text-[15px] text-muted-foreground">
+                Before the review, the model matched the hand labels exactly on all fields for{" "}
+                {R.strictAllFieldsCorrectPercent.toFixed(0)}% of jobs. Most of the real mistakes were
+                &quot;Graduate Trainee&quot; jobs tagged as internships and jobs asking for one year of
+                experience marked as not for freshers. Prompt v3 and two code checks now fix both; new
+                jobs are tagged with it from the next nightly run.
+              </p>
+            )}
           </>
         )}
       </Section>

@@ -25,7 +25,7 @@ from .taxonomy import Taxonomy
 
 log = logging.getLogger(__name__)
 
-PROMPT_VERSION = "v2"  # v2: focused description + consistency guards
+PROMPT_VERSION = "v3"  # v3: graduate trainee = full_time; min 0-1 years = fresher
 MAX_DESC_CHARS = 4000  # ~1,000 tokens of description per job
 _PARA_CAP = 800  # long paragraphs are split into sentence groups of this size
 MAX_OUTPUT_TOKENS = 1024  # leaves room for (low-effort) thinking before the JSON
@@ -116,7 +116,8 @@ in the list or cannot be determined.
 - state: the Indian state or union territory of that city, or null for Remote/unknown.
 - work_mode: "remote", "hybrid" or "onsite". If the posting does not say, use "onsite".
 - job_type: "internship" for internships, apprenticeships and trainee stipends; \
-"contract" for fixed-term or contract roles; otherwise "full_time".
+"contract" for fixed-term or contract roles; otherwise "full_time". Graduate trainee and \
+graduate engineer trainee programmes are salaried entry-level jobs: "full_time".
 - experience_min / experience_max: years of experience the posting asks for, as whole \
 numbers. "0-2 years" -> 0 and 2. "2+ years" -> 2 and null. Use null when not stated. \
 Internships with no stated requirement are 0 and 0.
@@ -214,17 +215,28 @@ def build_user_message(job: dict[str, Any]) -> str:
 _INTERNSHIP_TITLE = re.compile(
     r"\b(intern|interns|internship|internships|apprentice|apprenticeship)\b", re.IGNORECASE
 )
+# "Graduate Trainee", "Mechanical Engineer_Graduate Engineering Trainee" ("_" is a word
+# character, so \b would miss the second one).
+_GRADUATE = re.compile(r"(?<![a-z])graduate(?![a-z])", re.IGNORECASE)
 
 
 def apply_guards(tag: TagResult, job: dict[str, Any]) -> list[str]:
     """Fix answers that contradict the job title or the model's own numbers.
 
     Only unambiguous cases: an "Intern"/"Trainee" title is an internship a fresher can
-    apply to; a "Senior"/"Lead"/"Manager" title, or a stated minimum of 2+ years, is
-    not for freshers. Returns what was changed so the run can report it.
+    apply to, except a "Graduate Trainee", which is a full-time job; a "Senior"/"Lead"/
+    "Manager" title, or a stated minimum of 2+ years, is not for freshers; a stated
+    minimum of 0 or 1 year is. Returns what was changed so the run can report it.
     """
     title = job.get("title") or ""
     fixes: list[str] = []
+    if (
+        tag.job_type == "internship"
+        and _GRADUATE.search(title)
+        and not _INTERNSHIP_TITLE.search(title)
+    ):
+        fixes.append("job_type internship->full_time (graduate trainee)")
+        tag.job_type = "full_time"
     if INTERN.search(title):
         # "Graduate (Engineer) Trainee" is a full-time entry-level job in India, so only
         # intern/apprentice titles force the internship type; every such title is fresher.
@@ -245,6 +257,14 @@ def apply_guards(tag: TagResult, job: dict[str, Any]) -> list[str]:
         if tag.is_fresher and tag.experience_min is not None and tag.experience_min >= 2:
             fixes.append(f"is_fresher true->false (min {tag.experience_min} years)")
             tag.is_fresher = False
+        if (
+            not tag.is_fresher
+            and tag.experience_min is not None
+            and tag.experience_min <= 1
+            and not SENIOR.search(title)
+        ):
+            fixes.append(f"is_fresher false->true (min {tag.experience_min} years)")
+            tag.is_fresher = True
     return fixes
 
 

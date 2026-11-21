@@ -43,14 +43,28 @@ from memory.
 
 ## Accuracy (50 human-labelled posts)
 
-| Field              | Correct |
-| ------------------ | ------- |
-| role_category      | pending |
-| city               | pending |
-| work_mode          | pending |
-| job_type           | pending |
-| is_fresher         | pending |
-| **all five right** | pending |
+Measured 2026-11-21 on prompt v2: 50 random jobs (seed 20261116), 26 tagged by
+Gemini 3.5 Flash-Lite and 24 by Groq gpt-oss-120b. Labelled blind by a person.
+
+| Field              | Exact match | Fits the rules |
+| ------------------ | ----------- | -------------- |
+| role_category      | 66%         | 92%            |
+| city               | 96%         | 98%            |
+| work_mode          | 96%         | 98%            |
+| job_type           | 88%         | 88%            |
+| is_fresher         | 92%         | 94%            |
+| **all five right** | 48%         | **74%**        |
+
+"Exact match" is `eval/score.py` as is. "Fits the rules" comes from reviewing each
+of the 33 mismatches against the prompt's rules: when both answers fit (mostly hotel
+jobs, which have no category of their own, as `other`, `support` or `operations`),
+the model's answer counts as correct. That review was done after seeing the model's
+answers; every verdict and its reason is in `eval/out/adjudication.csv`.
+
+15 tags in 13 jobs were clearly wrong. The two biggest groups are fixed in prompt v3:
+"Graduate Trainee" jobs tagged as internships (6) and jobs asking for 0-1 years
+marked as not for freshers (3), both now also enforced in `apply_guards`. v3 only
+applies to newly tagged jobs, so re-measure on a fresh sample once enough exist.
 
 ## Cost per 1,000 posts
 

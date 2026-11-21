@@ -419,7 +419,9 @@ export default async function DocsPage() {
           <span className="font-bold">Status: </span>
           {EVAL_RESULTS.sampleSize === null
             ? "the hand-labelling is in progress. Results will appear here and on the About page."
-            : `done on ${EVAL_RESULTS.measuredOn}: all fields right on ${EVAL_RESULTS.allFieldsCorrectPercent?.toFixed(0)}% of ${EVAL_RESULTS.sampleSize} jobs.`}
+            : `done on ${EVAL_RESULTS.measuredOn} on ${EVAL_RESULTS.sampleSize} jobs. ${EVAL_RESULTS.accuracy
+                .map((a) => `${a.field} ${a.percent}%`)
+                .join(", ")}. All fields right on ${EVAL_RESULTS.allFieldsCorrectPercent?.toFixed(0)}% of jobs (${EVAL_RESULTS.strictAllFieldsCorrectPercent}% before reviewing the mismatches against the rules). See the About page for the method.`}
         </p>
       </Section>
 

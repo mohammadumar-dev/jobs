@@ -190,6 +190,36 @@ def test_guards_fix_contradictions(taxonomy):
     assert tag.job_type == "full_time" and tag.is_fresher is True
 
 
+def test_guards_graduate_trainee_is_full_time(taxonomy):
+    from jobsworker.tagger import apply_guards
+
+    for title in ["Graduate Trainee- Security", "Mechancial Engineer_Graduate Engineering Trainee",
+                  "2027 IT Graduate Talent Trainee"]:
+        tag = validate_tag({**GOOD, "job_type": "internship", "is_fresher": True}, taxonomy)
+        assert apply_guards(tag, {"title": title}) == ["job_type internship->full_time (graduate trainee)"]
+        assert tag.job_type == "full_time" and tag.is_fresher is True
+    # an actual graduate internship stays an internship
+    tag = validate_tag({**GOOD, "job_type": "internship", "is_fresher": True}, taxonomy)
+    assert apply_guards(tag, {"title": "Graduate Intern - Finance"}) == []
+    assert tag.job_type == "internship"
+
+
+def test_guards_min_one_year_is_fresher(taxonomy):
+    from jobsworker.tagger import apply_guards
+
+    tag = validate_tag({**GOOD, "job_type": "full_time", "is_fresher": False,
+                        "experience_min": 1, "experience_max": None}, taxonomy)
+    assert apply_guards(tag, {"title": "Laundry Associate"}) == ["is_fresher false->true (min 1 years)"]
+    assert tag.is_fresher is True
+    # a senior title still wins, and an unstated minimum is left to the model
+    tag = validate_tag({**GOOD, "job_type": "full_time", "is_fresher": False,
+                        "experience_min": 1, "experience_max": None}, taxonomy)
+    assert apply_guards(tag, {"title": "Senior Chef"}) == []
+    tag = validate_tag({**GOOD, "job_type": "full_time", "is_fresher": False,
+                        "experience_min": None, "experience_max": None}, taxonomy)
+    assert apply_guards(tag, {"title": "Associate, Marketing Technology"}) == []
+
+
 def test_cost_uses_batch_discount(settings):
     pricing = load_pricing(settings.pricing_path)
     tag = validate_tag(GOOD, __import__("jobsworker.taxonomy", fromlist=["x"]).load_taxonomy(settings.taxonomy_path))

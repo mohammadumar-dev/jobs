@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Label jobs</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1b1f24; --muted:#5b6470; --line:#e2e5ea; --brand:#2456d6; --ok:#1f8a4c; --pick:#e8efff; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 16px; display:grid; gap:16px; grid-template-columns: 1fr 380px; }
+  @media (max-width: 900px) { .wrap { grid-template-columns: 1fr; } }
+  header { grid-column: 1 / -1; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
+  h1 { font-size:20px; margin:0; }
+  .bar { height:8px; background:var(--line); border-radius:99px; overflow:hidden; width:240px; }
+  .bar > i { display:block; height:100%; background:var(--ok); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; }
+  .job h2 { margin:0 0 4px; font-size:22px; }
+  .meta { color:var(--muted); margin-bottom:12px; }
+  .meta b { color:var(--ink); }
+  .desc { white-space:pre-wrap; max-height:70vh; overflow:auto; border-top:1px solid var(--line); padding-top:12px; font-size:15px; }
+  .side { display:grid; gap:14px; align-content:start; position:sticky; top:12px; }
+  .q h3 { margin:0 0 6px; font-size:14px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); }
+  .q p { margin:0 0 8px; font-size:13px; color:var(--muted); }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .chips button { border:1px solid var(--line); background:#fff; border-radius:99px; padding:5px 11px; font:inherit; font-size:14px; cursor:pointer; }
+  .chips button:hover { border-color:var(--brand); }
+  .chips button.on { background:var(--brand); border-color:var(--brand); color:#fff; }
+  select { font:inherit; padding:6px; width:100%; border-radius:8px; border:1px solid var(--line); }
+  .nav { display:flex; gap:8px; flex-wrap:wrap; }
+  .btn { border:1px solid var(--line); background:#fff; padding:8px 14px; border-radius:8px; font:inherit; cursor:pointer; }
+  .btn.primary { background:var(--brand); color:#fff; border-color:var(--brand); }
+  .btn:disabled { opacity:.45; cursor:default; }
+  .dots { grid-column: 1 / -1; display:flex; flex-wrap:wrap; gap:4px; }
+  .dots button { width:28px; height:28px; border-radius:6px; border:1px solid var(--line); background:#fff; font-size:12px; cursor:pointer; }
+  .dots button.done { background:#dff3e7; border-color:#9fd6b5; }
+  .dots button.cur { outline:2px solid var(--brand); }
+  a { color:var(--brand); }
+  .hint { font-size:13px; color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Label jobs <span id="pos" class="hint"></span></h1>
+    <div style="display:flex;gap:12px;align-items:center">
+      <span id="count" class="hint"></span><div class="bar"><i id="fill"></i></div>
+      <button class="btn primary" id="dl">Download labels.csv</button>
+    </div>
+  </header>
+  <div class="dots" id="dots"></div>
+  <article class="card job">
+    <h2 id="title"></h2>
+    <div class="meta"><b id="company"></b> · <span id="location"></span> · <a id="apply" target="_blank" rel="noopener">open the original posting ↗</a></div>
+    <div class="desc" id="desc"></div>
+  </article>
+  <aside class="side">
+    <div class="card" id="qs"></div>
+    <div class="nav">
+      <button class="btn" id="prev">← Previous</button>
+      <button class="btn primary" id="next">Next →</button>
+    </div>
+    <p class="hint">Keys: ← / → to move. Your answers are saved in this browser as you go.</p>
+  </aside>
+</div>
+<script>
+const DATA = __DATA__;
+const ROWS = DATA.rows, OPT = DATA.options;
+const KEY = "firstrung-labels-v1";
+const QUESTIONS = [
+  ["role_category", "Role", "The kind of work. software = engineering, QA, DevOps, IT. data = analytics, ML, BI. support = customer support. operations = admin, logistics. other only if nothing fits."],
+  ["city", "City", "Main Indian city; first one if several. Remote = fully remote, no base city. Other = Indian place not in the list, or unclear."],
+  ["work_mode", "Work mode", "If the posting does not say, choose onsite."],
+  ["job_type", "Job type", "internship = internship, apprenticeship, trainee stipend. contract = fixed-term. Otherwise full_time."],
+  ["is_fresher", "Fresher?", "yes if someone with 0-1 years can really apply. no if it asks 2+ years, or the title is Senior / Lead / Manager."],
+];
+let answers = {};
+try { answers = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) {}
+ROWS.forEach(r => { answers[r.job_id] = answers[r.job_id] || {}; QUESTIONS.forEach(([f]) => { if (r[f] && !answers[r.job_id][f]) answers[r.job_id][f] = r[f]; }); });
+let i = 0;
+const $ = id => document.getElementById(id);
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(answers)); } catch (e) {} };
+const done = r => QUESTIONS.every(([f]) => answers[r.job_id][f]);
+
+function render() {
+  const r = ROWS[i], a = answers[r.job_id];
+  $("pos").textContent = `· job ${i + 1} of ${ROWS.length}`;
+  $("title").textContent = r.title;
+  $("company").textContent = r.company;
+  $("location").textContent = r.location || "(no location given)";
+  $("apply").href = r.apply_url;
+  $("desc").textContent = r.description || "(no description)";
+  $("desc").scrollTop = 0;
+  const qs = $("qs"); qs.innerHTML = "";
+  QUESTIONS.forEach(([f, label, help]) => {
+    const box = document.createElement("div"); box.className = "q"; box.style.marginBottom = "14px";
+    box.innerHTML = `<h3>${label}</h3><p>${help}</p>`;
+    if (f === "city") {
+      const s = document.createElement("select");
+      s.innerHTML = `<option value="">— choose —</option>` + OPT.city.map(c => `<option${a[f] === c ? " selected" : ""}>${c}</option>`).join("");
+      s.onchange = () => { a[f] = s.value; save(); progress(); };
+      box.appendChild(s);
+    } else {
+      const chips = document.createElement("div"); chips.className = "chips";
+      OPT[f].forEach(v => {
+        const b = document.createElement("button"); b.textContent = v; if (a[f] === v) b.className = "on";
+        b.onclick = () => { a[f] = v; save(); render(); };
+        chips.appendChild(b);
+      });
+      box.appendChild(chips);
+    }
+    qs.appendChild(box);
+  });
+  $("prev").disabled = i === 0;
+  $("next").textContent = i === ROWS.length - 1 ? "Last job" : "Next →";
+  $("next").disabled = i === ROWS.length - 1;
+  progress();
+}
+function progress() {
+  const n = ROWS.filter(done).length;
+  $("count").textContent = `${n} / ${ROWS.length} done`;
+  $("fill").style.width = (100 * n / ROWS.length) + "%";
+  const dots = $("dots"); dots.innerHTML = "";
+  ROWS.forEach((r, k) => {
+    const b = document.createElement("button"); b.textContent = k + 1;
+    b.className = (done(r) ? "done " : "") + (k === i ? "cur" : "");
+    b.onclick = () => { i = k; render(); };
+    dots.appendChild(b);
+  });
+}
+const go = d => { i = Math.max(0, Math.min(ROWS.length - 1, i + d)); render(); window.scrollTo(0, 0); };
+$("prev").onclick = () => go(-1);
+$("next").onclick = () => go(1);
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "SELECT") return;
+  if (e.key === "ArrowRight") go(1);
+  if (e.key === "ArrowLeft") go(-1);
+});
+$("dl").onclick = () => {
+  const missing = ROWS.filter(r => !done(r)).length;
+  if (missing) { $("count").textContent = `${missing} jobs still have blanks (white boxes above). Downloading anyway.`; }
+  const cols = ["job_id", "title", "company", "location", "description", "apply_url", ...QUESTIONS.map(q => q[0])];
+  const q = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const lines = [cols.join(",")].concat(ROWS.map(r => cols.map(c => q(c in answers[r.job_id] ? answers[r.job_id][c] : r[c])).join(",")));
+  const blob = new Blob(["﻿" + lines.join("\r\n") + "\r\n"], { type: "text/csv;charset=utf-8" });
+  const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = "labels.csv"; link.click();
+};
+render();
+</script>
+</body>
+</html>
