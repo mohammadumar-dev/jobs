@@ -125,8 +125,10 @@ Saved by the content-hash skip: pending.
   instead of replacing them, so the paid equivalent is what a paid API would have
   billed. Each run logs its tokens and paid equivalent at the end of tagging.
 - **Guards:** after validation, answers that contradict the title are corrected
-  ("Intern" title is an internship open to freshers; "Senior"/"Lead"/"Manager", or a
-  stated minimum of 2+ years, is not for freshers). The run log lists each fix.
+  ("Intern" title is an internship open to freshers; a "Graduate Trainee" title is
+  full_time, not an internship; "Senior"/"Lead"/"Manager", or a stated minimum of 2+
+  years, is not for freshers; a stated minimum of 0-1 years is, prompt v3). The run
+  log lists each fix.
 - **Output tokens include thinking.** The default model thinks briefly before
   answering (effort is set to low); those tokens are billed as output and are
   included in `job_tags.output_tokens`.

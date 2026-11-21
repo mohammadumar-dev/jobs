@@ -134,7 +134,7 @@ Fields:
 - city: the primary Indian work city from the allowed list. Map suburbs and alternate names to the listed city (Gurgaon, Gurugram, Noida -> "Delhi NCR"; Bangalore -> "Bengaluru"). If several Indian cities are listed, pick the first. Use "Remote" only when the job is fully remote with no base city, and "Other" for an Indian location that is not in the list or cannot be determined.
 - state: the Indian state or union territory of that city, or null for Remote/unknown.
 - work_mode: "remote", "hybrid" or "onsite". If the posting does not say, use "onsite".
-- job_type: "internship" for internships, apprenticeships and trainee stipends; "contract" for fixed-term or contract roles; otherwise "full_time".
+- job_type: "internship" for internships, apprenticeships and trainee stipends; "contract" for fixed-term or contract roles; otherwise "full_time". Graduate trainee and graduate engineer trainee programmes are salaried entry-level jobs: "full_time".
 - experience_min / experience_max: years of experience the posting asks for, as whole numbers. "0-2 years" -> 0 and 2. "2+ years" -> 2 and null. Use null when not stated. Internships with no stated requirement are 0 and 0.
 - is_fresher: true when someone with 0-1 years of experience can realistically apply: internships, graduate/trainee programmes, and roles whose minimum experience is 0 or 1 year or is not stated for a clearly junior title. false when the posting requires 2 or more years, or the title is senior, lead, manager or similar.
 
@@ -341,7 +341,7 @@ export default async function DocsPage() {
       </Section>
 
       <Section id="prompts" title="Prompts" intro="The exact text the AI gets, and a real answer from the live database.">
-        <Code title="System prompt (prompt version v2)">{SYSTEM_PROMPT}</Code>
+        <Code title="System prompt (prompt version v3)">{SYSTEM_PROMPT}</Code>
         <div className="grid gap-4 md:grid-cols-2">
           <Code title="User message for one job (shortened)">{USER_MESSAGE}</Code>
           <Code title="Model answer (stored in job_tags)">{MODEL_ANSWER}</Code>
