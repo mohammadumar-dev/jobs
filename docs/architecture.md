@@ -85,7 +85,7 @@ Folder names: the plan calls these `/worker`, `/api`, `/web`. The repository use
 | No open redirect on apply | only stored http(s) URLs are returned | `applyNeverReturnsANonHttpUrl` |
 | Secrets from env only | `.env` files are gitignored; `.env.example` provided | - |
 | Read-only DB role for job tables | optional, `docs/db-roles.sql` | not automated |
-| Dependency scanning | `pip-audit`, `npm audit`, OWASP dependency-check in CI | CI |
+| Dependency scanning | `pip-audit`, `npm audit`, OSV-Scanner in CI | CI |
 
 ### Apply flow
 

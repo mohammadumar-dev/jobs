@@ -165,7 +165,7 @@ GIN full-text index on title+company+description.
   - Sanitize job description HTML server-side (jsoup allowlist) before return.
   - Validate apply_url is http(s) before redirecting (no open redirect).
   - Secrets from env only; DB user for API has read-only grants on job tables.
-  - Dependency scanning in CI (OWASP dependency-check, pip-audit, npm audit).
+  - Dependency scanning in CI (OSV-Scanner, pip-audit, npm audit).
 
 ## 6. Next.js frontend
 
